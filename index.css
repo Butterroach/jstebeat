@@ -1,0 +1,25 @@
+body {
+  background-color: #1e1e1e;
+  color: white;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+h1 {
+  text-align: center;
+}
+
+a {
+  text-align: center;
+}
+
+a:link {
+  color: #00bcd4;
+}
+
+a:visited {
+  color: #00da75;
+}
+
+#cont1 {
+  text-align: center;
+}
