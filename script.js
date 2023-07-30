@@ -18,7 +18,9 @@ function playBytebeat() {
   tan = Math.tan;
   const bytebeatCode = document.getElementById("bytebeat-code").value;
   const sampleRate = document.getElementById("sample-rate").value;
+  errorP = document.getElementById("error");
   audioContext = new (window.AudioContext || window.webkitAudioContext)();
+  audioContext.sampleRate = sampleRate;
   const bufferSize = 2 ** 14;
   const scriptNode = audioContext.createScriptProcessor(bufferSize, 0, 1);
   let theReali = 0;
@@ -27,9 +29,13 @@ function playBytebeat() {
     for (let i = 0; i < bufferSize; i++) {
       theReali++;
       t = (theReali / audioContext.sampleRate) * sampleRate;
-      const x = eval(bytebeatCode) & 255;
-      const sample = x / 128 - 1;
-      outputBuffer[i] = sample;
+      try {
+        const x = eval(bytebeatCode) & 255;
+        const sample = x / 128 - 1;
+        outputBuffer[i] = sample;
+      } catch (error) {
+        errorP.innerText = error;
+      }
     }
   };
 
@@ -38,4 +44,5 @@ function playBytebeat() {
 
 function stopBytebeat() {
   audioContext.suspend();
+  errorP.innerText = "No error";
 }
