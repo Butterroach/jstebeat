@@ -1,4 +1,9 @@
+let isPlaying;
+
 function playBytebeat() {
+  if (isPlaying) {
+    return;
+  } else isPlaying = true;
   E = Math.E;
   PI = Math.PI;
   abs = Math.abs;
@@ -45,4 +50,5 @@ function playBytebeat() {
 function stopBytebeat() {
   audioContext.suspend();
   errorP.innerText = "No error";
+  isPlaying = false;
 }
