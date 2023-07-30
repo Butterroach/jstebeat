@@ -30,7 +30,6 @@ function playBytebeat() {
       const x = eval(bytebeatCode) & 255;
       const sample = x / 128 - 1;
       outputBuffer[i] = sample;
-      setTimeout(null, 1);
     }
   };
 
