@@ -29,17 +29,29 @@ function playBytebeat() {
   const bufferSize = 2 ** 14;
   const scriptNode = audioContext.createScriptProcessor(bufferSize, 0, 1);
   let theReali = 0;
+  let errori = 0;
   scriptNode.onaudioprocess = function (audioProcessingEvent) {
     const outputBuffer = audioProcessingEvent.outputBuffer.getChannelData(0);
     for (let i = 0; i < bufferSize; i++) {
       theReali++;
       t = (theReali / audioContext.sampleRate) * sampleRate;
       try {
-        const x = eval(bytebeatCode) & 255;
-        const sample = x / 128 - 1;
+        const kjsdfkljsdfkljthisvariablenameisprobablynevergonnabeusedinthebytebeathshshshhshshsjstebeat_jstebeat =
+          eval(bytebeatCode) & 255;
+        const sample =
+          kjsdfkljsdfkljthisvariablenameisprobablynevergonnabeusedinthebytebeathshshshhshshsjstebeat_jstebeat /
+            128 -
+          1;
         outputBuffer[i] = sample;
+        errori > 0 ? (errori = 0) : 0;
       } catch (error) {
         errorP.innerText = error;
+        errori++;
+        if (errori > 4096) {
+          stopBytebeat(); // prevent lag (value might be overkill)
+          return;
+        }
+        continue;
       }
     }
   };
@@ -49,6 +61,6 @@ function playBytebeat() {
 
 function stopBytebeat() {
   audioContext.suspend();
-  errorP.innerText = "No error";
+  errorP.InnerText = "No error";
   isPlaying = false;
 }

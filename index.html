@@ -22,8 +22,8 @@
     <h1>JStebeat</h1>
     <div id="cont1">
       <label for="bytebeat-code">Bytebeat code:</label>
-      <textarea id="bytebeat-code" rows="4" cols="50">
-t/=4.8,t>>12&&(sin((t-(t>>4&t>>8)&t>>12)-1)+sin(25*cbrt(t%4096))+(random()*(~t>>'32415342'[t>>17&7]&255)>>6))*32+80</textarea
+      <textarea id="bytebeat-code" rows="20" cols="150">
+t/=6,t*=1.2,(sin(sin(t/100)-t/(2+(t>>10&t>>12)%9))+sin(19*cbrt(t%4096))+(random()*2-1)/(2+(t+4096)/4096%2))/3*127+127</textarea
       >
       <br />
       <label for="sample-rate">Sample rate (in Hz):</label>
@@ -31,12 +31,6 @@ t/=4.8,t>>12&&(sin((t-(t>>4&t>>8)&t>>12)-1)+sin(25*cbrt(t%4096))+(random()*(~t>>
       <button type="button" onclick="playBytebeat()">Play</button>
       <button type="button" onclick="stopBytebeat()">Stop</button>
       <p id="error">No error</p>
-      <p></p>
-      <p></p>
-      <h2>
-        WARNING: Your device might crash if you have an error that doesn't go
-        away after a few seconds, I gotta fix that later
-      </h2>
     </div>
   </body>
 </html>
