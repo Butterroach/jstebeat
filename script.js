@@ -1,5 +1,12 @@
 let isPlaying;
 
+function numToInt8(num) {
+  // this is easier with a function
+  const arr = new Int8Array(1);
+  arr[0] = num;
+  return arr[0];
+}
+
 function playBytebeat() {
   if (isPlaying) {
     return;
@@ -23,6 +30,7 @@ function playBytebeat() {
   tan = Math.tan;
   const bytebeatCode = document.getElementById("bytebeat-code").value;
   const sampleRate = document.getElementById("sample-rate").value;
+  const bytebeatMode = document.getElementById("mode").value;
   errorP = document.getElementById("error");
   audioContext = new (window.AudioContext || window.webkitAudioContext)();
   audioContext.sampleRate = sampleRate;
@@ -36,12 +44,16 @@ function playBytebeat() {
       theReali++;
       t = (theReali / audioContext.sampleRate) * sampleRate;
       try {
-        const kjsdfkljsdfkljthisvariablenameisprobablynevergonnabeusedinthebytebeathshshshhshshsjstebeat_jstebeat =
-          eval(bytebeatCode) & 255;
-        const sample =
-          kjsdfkljsdfkljthisvariablenameisprobablynevergonnabeusedinthebytebeathshshshhshshsjstebeat_jstebeat /
-            128 -
-          1;
+        const kjsjstebeat = eval(bytebeatCode);
+        if (bytebeatMode === "bb") {
+          sample = (kjsjstebeat & 255) / 128 - 1;
+        } else if (bytebeatMode === "sbb") {
+          sample = numToInt8(kjsjstebeat) / 128;
+        } else if (bytebeatMode === "fb") {
+          sample = kjsjstebeat;
+        } else {
+          sample = (kjsjstebeat & 255) / 128 - 1; // just in case
+        }
         outputBuffer[i] = sample;
         errori > 0 ? (errori = 0) : 0;
       } catch (error) {

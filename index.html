@@ -10,12 +10,8 @@
   <body>
     <noscript>
       <h1>
-        this website uses javascript and so on i will annoy you btw enable
-        javascript please tho enable javascript its really cool like enable
-        javascript dude like man like just why do you have javascript disabled
-        man like man like like man man man like man like enable javascript
-        please tho like man like like man like please enable javascript tho like
-        man
+        THIS USES & REQUIRES JAVASCRIPT <br />
+        ENABLE JAVASCRIPT TO USE THIS
       </h1>
     </noscript>
 
@@ -28,6 +24,12 @@ t/=6,t*=1.2,(sin(sin(t/100)-t/(2+(t>>10&t>>12)%9))+sin(19*cbrt(t%4096))+(random(
       <br />
       <label for="sample-rate">Sample rate (in Hz):</label>
       <input id="sample-rate" type="number" value="48000" />
+      <select id="mode" title="Mode">
+        <option value="bb" selected>Bytebeat</option>
+        <option value="sbb">Signed bytebeat</option>
+        <option value="fb">Floatbeat</option>
+      </select>
+      <br />
       <button type="button" onclick="playBytebeat()">Play</button>
       <button type="button" onclick="stopBytebeat()">Stop</button>
       <p id="error">No error</p>
