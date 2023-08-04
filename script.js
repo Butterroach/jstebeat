@@ -1,5 +1,25 @@
 let isPlaying;
 
+setTimeout(() => {
+  if (window.location.hash) {
+    hashparts = window.location.hash.substring(1).split("@");
+    document.getElementById("bytebeat-code").value = atob(hashparts[0]);
+    document.getElementById("sample-rate").value = parseInt(hashparts[1]);
+  }
+});
+
+async function copyLink() {
+  copylinkbutton = document.getElementById("copylinkbutt");
+  await navigator.clipboard.writeText(
+    "https://butterroach.github.io/jstebeat/#" +
+      btoa(document.getElementById("bytebeat-code").value) +
+      "@" +
+      document.getElementById("sample-rate").value
+  );
+  copylinkbutton.InnerText = "Copied!";
+  setTimeout(() => (copylinkbutton.InnerText = "Copy link"), 3e3);
+}
+
 function numToInt8(num) {
   // this is easier with a function
   const arr = new Int8Array(1);
