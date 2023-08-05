@@ -1,12 +1,17 @@
 let isPlaying;
 
-setTimeout(() => {
-  if (window.location.hash) {
-    hashparts = window.location.hash.substring(1).split("@");
-    document.getElementById("bytebeat-code").value = atob(hashparts[0]);
-    document.getElementById("sample-rate").value = parseInt(hashparts[1]);
-  }
-});
+setTimeout(
+  (hash_change = (a) => {
+    hash = a || window.location.hash;
+    if (hash) {
+      hashparts = a.substring(1).split("@");
+      hashparts[2] = a.substring(1).split("]")[1];
+      document.getElementById("bytebeat-code").value = atob(hashparts[0]);
+      document.getElementById("sample-rate").value = parseInt(hashparts[1]);
+      document.getElementById("mode").value = hashparts[2];
+    }
+  })
+);
 
 async function copyLink() {
   copylinkbutton = document.getElementById("copylinkbutt");
@@ -14,10 +19,14 @@ async function copyLink() {
     "https://butterroach.github.io/jstebeat/#" +
       btoa(document.getElementById("bytebeat-code").value) +
       "@" +
-      document.getElementById("sample-rate").value
+      document.getElementById("sample-rate").value +
+      "]" +
+      document.getElementById("mode").value
   );
-  copylinkbutton.InnerText = "Copied!";
-  setTimeout(() => (copylinkbutton.InnerText = "Copy link"), 3e3);
+  copylinkbutton.textContent = "Copied!";
+  setTimeout(function () {
+    copylinkbutton.textContent = "Copy link";
+  }, 3000);
 }
 
 function numToInt8(num) {
