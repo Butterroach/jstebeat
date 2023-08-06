@@ -66,13 +66,12 @@ function playBytebeat() {
   });
   const bufferSize = 4096;
   const scriptNode = audioContext.createScriptProcessor(bufferSize, 0, 1);
-  let theReali = 0;
+  let t_jstebeat = 0; // different name to not break some stuff
   let errori = 0;
   scriptNode.onaudioprocess = function (audioProcessingEvent) {
     const outputBuffer = audioProcessingEvent.outputBuffer.getChannelData(0);
-    for (let i = 0; i < bufferSize; i++) {
-      theReali++;
-      t = (theReali / audioContext.sampleRate) * sampleRate;
+    for (let i_jstebeat = 0; i_jstebeat < bufferSize; i_jstebeat++) {
+      t = t_jstebeat++;
       try {
         const kjsjstebeat = eval(bytebeatCode);
         if (bytebeatMode === "bb") {
@@ -84,7 +83,7 @@ function playBytebeat() {
         } else {
           sample = (kjsjstebeat & 255) / 128 - 1; // just in case
         }
-        outputBuffer[i] = sample;
+        outputBuffer[i_jstebeat] = sample;
         errori > 0 ? (errori = 0) : 0;
       } catch (error) {
         errorP.innerText = error;
