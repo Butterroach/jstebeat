@@ -61,8 +61,9 @@ function playBytebeat() {
   const sampleRate = document.getElementById("sample-rate").value;
   const bytebeatMode = document.getElementById("mode").value;
   errorP = document.getElementById("error");
-  audioContext = new (window.AudioContext || window.webkitAudioContext)();
-  audioContext.sampleRate = sampleRate;
+  audioContext = new (window.AudioContext || window.webkitAudioContext)({
+    sampleRate: parseInt(sampleRate),
+  });
   const bufferSize = 2 ** 14;
   const scriptNode = audioContext.createScriptProcessor(bufferSize, 0, 1);
   let theReali = 0;
