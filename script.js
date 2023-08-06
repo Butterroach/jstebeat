@@ -64,7 +64,7 @@ function playBytebeat() {
   audioContext = new (window.AudioContext || window.webkitAudioContext)({
     sampleRate: parseInt(sampleRate),
   });
-  const bufferSize = 2 ** 14;
+  const bufferSize = 4096;
   const scriptNode = audioContext.createScriptProcessor(bufferSize, 0, 1);
   let theReali = 0;
   let errori = 0;
