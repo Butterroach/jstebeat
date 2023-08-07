@@ -42,6 +42,7 @@ function playBytebeat() {
   } else isPlaying = true;
   E = Math.E;
   PI = Math.PI;
+  TAU = PI * 2;
   abs = Math.abs;
   acos = Math.acos;
   cbrt = Math.cbrt;
@@ -57,6 +58,9 @@ function playBytebeat() {
   sin = Math.sin;
   sqrt = Math.sqrt;
   tan = Math.tan;
+  pow = Math.pow;
+  asin = Math.asin;
+  atan = Math.atan;
   const bytebeatCode = document.getElementById("bytebeat-code").value;
   const sampleRate = document.getElementById("sample-rate").value;
   const bytebeatMode = document.getElementById("mode").value;
@@ -65,25 +69,60 @@ function playBytebeat() {
     sampleRate: parseInt(sampleRate),
   });
   const bufferSize = 4096;
-  const scriptNode = audioContext.createScriptProcessor(bufferSize, 0, 1);
+  t = 1024;
+  const scriptNode = audioContext.createScriptProcessor(
+    bufferSize,
+    0,
+    (isStereo = Array.isArray(eval(bytebeatCode))) ? 2 : 1
+  );
   let t_jstebeat = 0; // different name to not break some stuff
   let errori = 0;
   scriptNode.onaudioprocess = function (audioProcessingEvent) {
-    const outputBuffer = audioProcessingEvent.outputBuffer.getChannelData(0);
+    let outputBuffer = audioProcessingEvent.outputBuffer;
+    if (isStereo) {
+      leftOutputBuffer = outputBuffer.getChannelData(0);
+      rightOutputBuffer = outputBuffer.getChannelData(1);
+    } else {
+      outputBuffer = outputBuffer.getChannelData(0);
+    }
     for (let i_jstebeat = 0; i_jstebeat < bufferSize; i_jstebeat++) {
       t = t_jstebeat++;
       try {
-        const kjsjstebeat = eval(bytebeatCode);
-        if (bytebeatMode === "bb") {
-          sample = (kjsjstebeat & 255) / 128 - 1;
-        } else if (bytebeatMode === "sbb") {
-          sample = numToInt8(kjsjstebeat) / 128;
-        } else if (bytebeatMode === "fb") {
-          sample = kjsjstebeat;
+        if (isStereo) {
+          with (this) {
+            kjsjstebeat_result = eval(bytebeatCode);
+          }
+          if (bytebeatMode === "bb") {
+            leftsample = (kjsjstebeat_result[0] & 255) / 128 - 1;
+            rightsample = (kjsjstebeat_result[1] & 255) / 128 - 1;
+          } else if (bytebeatMode === "sbb") {
+            leftsample = numToInt8(kjsjstebeat_result[0]) / 128;
+            rightsample = numToInt8(kjsjstebeat_result[1]) / 128;
+          } else if (bytebeatMode === "fb") {
+            leftsample = kjsjstebeat_result[0];
+            rightsample = kjsjstebeat_result[1];
+          } else {
+            // just in case
+            leftsample = (kjsjstebeat_result & 255) / 128 - 1;
+            rightsample = (kjsjstebeat_result & 255) / 128 - 1;
+          }
+          leftOutputBuffer[i_jstebeat] = leftsample;
+          rightOutputBuffer[i_jstebeat] = rightsample;
         } else {
-          sample = (kjsjstebeat & 255) / 128 - 1; // just in case
+          with (this) {
+            kjsjstebeat_result = eval(bytebeatCode);
+          }
+          if (bytebeatMode === "bb") {
+            sample = (kjsjstebeat_result & 255) / 128 - 1;
+          } else if (bytebeatMode === "sbb") {
+            sample = numToInt8(kjsjstebeat_result) / 128;
+          } else if (bytebeatMode === "fb") {
+            sample = kjsjstebeat_result;
+          } else {
+            sample = (kjsjstebeat_result & 255) / 128 - 1; // just in case
+          }
+          outputBuffer[i_jstebeat] = sample;
         }
-        outputBuffer[i_jstebeat] = sample;
         errori > 0 ? (errori = 0) : 0;
       } catch (error) {
         errorP.innerText = error;
