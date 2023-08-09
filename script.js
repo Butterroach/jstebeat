@@ -29,6 +29,22 @@ async function copyLink() {
   }, 3000);
 }
 
+async function copyHash() {
+  copyhashbutton = document.getElementById("copyhashbutt");
+  await navigator.clipboard.writeText(
+    "#" +
+      btoa(document.getElementById("bytebeat-code").value) +
+      "@" +
+      document.getElementById("sample-rate").value +
+      "]" +
+      document.getElementById("mode").value
+  );
+  copyhashbutton.textContent = "Copied!";
+  setTimeout(function () {
+    copyhashbutton.textContent = "Copy hash";
+  }, 3000);
+}
+
 function numToInt8(num) {
   // this is easier with a function
   const arr = new Int8Array(1);
