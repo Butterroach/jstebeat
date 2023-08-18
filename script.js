@@ -9,7 +9,8 @@ setTimeout(
       document.getElementById("sample-rate").value = parseInt(hashparts[1]);
       document.getElementById("mode").value = hashparts[2];
     }
-  })
+  }),
+  1
 );
 
 async function copyLink() {
@@ -156,6 +157,6 @@ function playBytebeat() {
 
 function stopBytebeat() {
   audioContext.suspend();
-  errorP.InnerText = "No error";
+  document.getElementById("error").InnerText = "No error";
   isPlaying = false;
 }
