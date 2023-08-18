@@ -1,11 +1,10 @@
 let isPlaying;
 
 setTimeout(
-  (hash_change = (a) => {
-    hash = a || window.location.hash;
+  (hash_change = (hash = window.location.hash) => {
     if (hash) {
-      hashparts = a.substring(1).split("@");
-      hashparts[2] = a.substring(1).split("]")[1];
+      hashparts = hash.substring(1).split("@");
+      hashparts[2] = hash.substring(1).split("]")[1];
       document.getElementById("bytebeat-code").value = atob(hashparts[0]);
       document.getElementById("sample-rate").value = parseInt(hashparts[1]);
       document.getElementById("mode").value = hashparts[2];
