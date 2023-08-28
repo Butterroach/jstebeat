@@ -77,7 +77,7 @@ function playBytebeat() {
   pow = Math.pow;
   asin = Math.asin;
   atan = Math.atan;
-  const bytebeatCode = document.getElementById("bytebeat-code").value;
+  let bytebeatCode = document.getElementById("bytebeat-code").value; // not a constant since it will be modified if its a minibake
   const sampleRate = document.getElementById("sample-rate").value;
   const bytebeatMode = document.getElementById("mode").value;
   errorP = document.getElementById("error");
@@ -86,6 +86,14 @@ function playBytebeat() {
   });
   const bufferSize = 4096;
   t = 1024;
+  // make minibakes not so laggy
+  if (
+    /^eval\(unescape\(escape(?:`|\('|\("|\(`)(.*?)(?:`|'\)|"\)|`\)).replace\(\/u\(\.\.\)\/g,["'`]\$1%["'`]\)\)\)$/.test(
+      bytebeatCode
+    )
+  ) {
+    bytebeatCode = eval(bytebeatCode.replace("eval", ""));
+  }
   const scriptNode = audioContext.createScriptProcessor(
     bufferSize,
     0,
