@@ -80,7 +80,6 @@ function playBytebeat() {
   let bytebeatCode = document.getElementById("bytebeat-code").value; // not a constant since it will be modified if its a minibake
   const sampleRate = document.getElementById("sample-rate").value;
   const bytebeatMode = document.getElementById("mode").value;
-  errorP = document.getElementById("error");
   audioContext = new (window.AudioContext || window.webkitAudioContext)({
     sampleRate: parseInt(sampleRate),
   });
@@ -100,7 +99,6 @@ function playBytebeat() {
     (isStereo = Array.isArray(eval(bytebeatCode))) ? 2 : 1
   );
   let t_jstebeat = 0; // different name to not break some stuff
-  let errori = 0;
   scriptNode.onaudioprocess = function (audioProcessingEvent) {
     let outputBuffer = audioProcessingEvent.outputBuffer;
     if (isStereo) {
@@ -111,51 +109,40 @@ function playBytebeat() {
     }
     for (let i_jstebeat = 0; i_jstebeat < bufferSize; i_jstebeat++) {
       t = t_jstebeat++;
-      try {
-        if (isStereo) {
-          with (this) {
-            kjsjstebeat_result = eval(bytebeatCode);
-          }
-          if (bytebeatMode === "bb") {
-            leftsample = (kjsjstebeat_result[0] & 255) / 128 - 1;
-            rightsample = (kjsjstebeat_result[1] & 255) / 128 - 1;
-          } else if (bytebeatMode === "sbb") {
-            leftsample = numToInt8(kjsjstebeat_result[0]) / 128;
-            rightsample = numToInt8(kjsjstebeat_result[1]) / 128;
-          } else if (bytebeatMode === "fb") {
-            leftsample = kjsjstebeat_result[0];
-            rightsample = kjsjstebeat_result[1];
-          } else {
-            // just in case
-            leftsample = (kjsjstebeat_result & 255) / 128 - 1;
-            rightsample = (kjsjstebeat_result & 255) / 128 - 1;
-          }
-          leftOutputBuffer[i_jstebeat] = leftsample;
-          rightOutputBuffer[i_jstebeat] = rightsample;
+      if (isStereo) {
+        with (this) {
+          kjsjstebeat_result = eval(bytebeatCode);
+        }
+        if (bytebeatMode === "bb") {
+          leftsample = (kjsjstebeat_result[0] & 255) / 128 - 1;
+          rightsample = (kjsjstebeat_result[1] & 255) / 128 - 1;
+        } else if (bytebeatMode === "sbb") {
+          leftsample = numToInt8(kjsjstebeat_result[0]) / 128;
+          rightsample = numToInt8(kjsjstebeat_result[1]) / 128;
+        } else if (bytebeatMode === "fb") {
+          leftsample = kjsjstebeat_result[0];
+          rightsample = kjsjstebeat_result[1];
         } else {
-          with (this) {
-            kjsjstebeat_result = eval(bytebeatCode);
-          }
-          if (bytebeatMode === "bb") {
-            sample = (kjsjstebeat_result & 255) / 128 - 1;
-          } else if (bytebeatMode === "sbb") {
-            sample = numToInt8(kjsjstebeat_result) / 128;
-          } else if (bytebeatMode === "fb") {
-            sample = kjsjstebeat_result;
-          } else {
-            sample = (kjsjstebeat_result & 255) / 128 - 1; // just in case
-          }
-          outputBuffer[i_jstebeat] = sample;
+          // just in case
+          leftsample = (kjsjstebeat_result & 255) / 128 - 1;
+          rightsample = (kjsjstebeat_result & 255) / 128 - 1;
         }
-        errori > 0 ? (errori = 0) : 0;
-      } catch (error) {
-        errorP.innerText = error;
-        errori++;
-        if (errori > 4096) {
-          stopBytebeat(); // prevent lag (value might be overkill)
-          return;
+        leftOutputBuffer[i_jstebeat] = leftsample;
+        rightOutputBuffer[i_jstebeat] = rightsample;
+      } else {
+        with (this) {
+          kjsjstebeat_result = eval(bytebeatCode);
         }
-        continue;
+        if (bytebeatMode === "bb") {
+          sample = (kjsjstebeat_result & 255) / 128 - 1;
+        } else if (bytebeatMode === "sbb") {
+          sample = numToInt8(kjsjstebeat_result) / 128;
+        } else if (bytebeatMode === "fb") {
+          sample = kjsjstebeat_result;
+        } else {
+          sample = (kjsjstebeat_result & 255) / 128 - 1; // just in case
+        }
+        outputBuffer[i_jstebeat] = sample;
       }
     }
   };
@@ -165,6 +152,5 @@ function playBytebeat() {
 
 function stopBytebeat() {
   audioContext.suspend();
-  document.getElementById("error").InnerText = "No error";
   isPlaying = false;
 }
