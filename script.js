@@ -1,11 +1,24 @@
 let isPlaying;
 
+function base64ToBytes(base64) {
+  const binString = atob(base64);
+  return Uint8Array.from(binString, (m) => m.codePointAt(0));
+}
+
+function bytesToBase64(bytes) {
+  const binString = Array.from(bytes, (x) => String.fromCodePoint(x)).join("");
+  return btoa(binString);
+}
+// above functions stolen from MDN docs thank you so much
+
 setTimeout(
   (hash_change = (hash = window.location.hash) => {
     if (hash) {
       hashparts = hash.substring(1).split("@");
       hashparts[2] = hash.substring(1).split("]")[1];
-      document.getElementById("bytebeat-code").value = atob(hashparts[0]);
+      document.getElementById("bytebeat-code").value = new TextDecoder().decode(
+        base64ToBytes(hashparts[0])
+      );
       document.getElementById("sample-rate").value = parseInt(hashparts[1]);
       document.getElementById("mode").value = hashparts[2];
     }
@@ -17,7 +30,9 @@ async function copyLink() {
   copylinkbutton = document.getElementById("copylinkbutt");
   await navigator.clipboard.writeText(
     "https://butterroach.github.io/jstebeat/#" +
-      btoa(document.getElementById("bytebeat-code").value) +
+      bytesToBase64(
+        new TextEncoder().encode(document.getElementById("bytebeat-code").value)
+      ) +
       "@" +
       document.getElementById("sample-rate").value +
       "]" +
@@ -33,7 +48,9 @@ async function copyHash() {
   copyhashbutton = document.getElementById("copyhashbutt");
   await navigator.clipboard.writeText(
     "#" +
-      btoa(document.getElementById("bytebeat-code").value) +
+      bytesToBase64(
+        new TextEncoder().encode(document.getElementById("bytebeat-code").value)
+      ) +
       "@" +
       document.getElementById("sample-rate").value +
       "]" +
