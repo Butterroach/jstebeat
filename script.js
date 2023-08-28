@@ -1,3 +1,7 @@
+// psubscirbe you have 19 webhint warnings please fix your player
+// i know mine has like 6 warnings but i can only fix 2 one of those and 1 of the warnings i can fix isnt all that important
+// btw your player hangs sometimes on me on firefox please test it for firefox too there are firefox users too yknow??!??!@!?@?!@?!
+
 let isPlaying;
 
 function base64ToBytes(base64) {
