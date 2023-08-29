@@ -110,7 +110,7 @@ function playBytebeat() {
   // make minibakes not so laggy
   if (
     /^eval\(unescape\(escape(?:`|\('|\("|\(`)(.*?)(?:`|'\)|"\)|`\)).replace\(\/u\(\.\.\)\/g,["'`]\$1%["'`]\)\)\)$/.test(
-      bytebeatCode
+      bytebeatCode.replaceAll(" ", "")
     )
   ) {
     bytebeatCode = eval(bytebeatCode.replace("eval", ""));
