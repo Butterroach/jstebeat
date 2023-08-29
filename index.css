@@ -31,3 +31,21 @@ ste {
 reo {
   color: #ff00ff;
 }
+
+#noscripttext {
+  /* make it way too fucking obvious */
+  background-color: white;
+  text-shadow: 2px 9px blue;
+  animation-name: noscriptstuff;
+  animation-duration: 2s;
+  animation-fill-mode: forwards;
+}
+
+@keyframes noscriptstuff {
+  to {
+    color: red;
+  }
+  from {
+    color: yellow;
+  }
+}
