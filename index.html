@@ -65,7 +65,7 @@
     <div id="cont1">
       <label for="bytebeat-code">Bytebeat code:</label>
       <textarea id="bytebeat-code" rows="20" cols="150">
-t/=6,t*=1.2,(sin(sin(t/100)-t/(2+(t>>10&t>>12)%9))+sin(19*cbrt(t%4096))+(random()*2-1)/(2+(t+4096)/4096%2))/3*127+127</textarea
+t/=4.42,max(min((t*(21&(t>>11)+1)&128|sin(13*cbrt(t*'20233440'[t>>11&7]%4096))*64+64)%256/1.4+(random()*2-1)/(1+t/1024%8)*64+32,255),0)</textarea
       >
       <br />
       <label for="sample-rate">Sample rate (in Hz):</label>
@@ -101,7 +101,7 @@ t/=6,t*=1.2,(sin(sin(t/100)-t/(2+(t>>10&t>>12)%9))+sin(19*cbrt(t%4096))+(random(
       <p>
         <a
           href="javascript:hash_change('#dC89Nix0Kj0xLjIsKHNpbihzaW4odC8xMDApLXQvKDIrKHQ+PjEwJnQ+PjEyKSU5KSkrc2luKDE5KmNicnQodCU0MDk2KSkrKHJhbmRvbSgpKjItMSkvKDIrKHQrNDA5NikvNDA5NiUyKSkvMyoxMjcrMTI3@48000]bb')"
-          >"dj trill" (default code)</a
+          >"dj trill"</a
         >
         (by butterroach, Remix of
         <a
@@ -170,6 +170,18 @@ t/=6,t*=1.2,(sin(sin(t/100)-t/(2+(t>>10&t>>12)%9))+sin(19*cbrt(t%4096))+(random(
           >"glitchy melody"</a
         >
         (by butterroach)
+      </p>
+      <p>
+        <a
+          href="javascript:hash_change('#dC89NC40MixtYXgobWluKCh0KigyMSYodD4+MTEpKzEpJjEyOHxzaW4oMTMqY2JydCh0KicyMDIzMzQ0MCdbdD4+MTEmN10lNDA5NikpKjY0KzY0KSUyNTYvMS40KyhyYW5kb20oKSoyLTEpLygxK3QvMTAyNCU4KSo2NCszMiwyNTUpLDAp@48000]bb')"
+          >"42 liters" (default code)</a
+        >
+        (by butterroach, remix of
+        <a
+          href="https://www.reddit.com/r/bytebeat/comments/1625h9m/42_melody_remix/"
+          >42 melody remix</a
+        >
+        by MentionBig3715)
       </p>
     </div>
   </body>
