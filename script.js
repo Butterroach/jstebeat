@@ -98,6 +98,7 @@ function playBytebeat() {
   pow = Math.pow;
   asin = Math.asin;
   atan = Math.atan;
+  int = Math.floor;
   let bytebeatCode = document.getElementById("bytebeat-code").value; // not a constant since it will be modified if its a minibake
   const sampleRate = document.getElementById("sample-rate").value;
   const bytebeatMode = document.getElementById("mode").value;
