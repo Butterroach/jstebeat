@@ -139,6 +139,8 @@ function playBytebeat() {
   ) {
     bytebeatCode = eval(bytebeatCode.replace("eval", ""));
   }
+  bytebeat_func = Function("t", `return ${bytebeatCode};`);
+  bytebeat_func(0); // turns out this fixes the old issue of how you cant do t?0:x=0
   const scriptNode = audioContext.createScriptProcessor(
     bufferSize,
     0,
@@ -157,7 +159,7 @@ function playBytebeat() {
       t = t_jstebeat++;
       if (isStereo) {
         with (this) {
-          kjsjstebeat_result = eval(bytebeatCode);
+          kjsjstebeat_result = bytebeat_func(t);
         }
         if (bytebeatMode === "bb") {
           leftsample = (kjsjstebeat_result[0] & 255) / 128 - 1;
@@ -177,7 +179,7 @@ function playBytebeat() {
         rightOutputBuffer[i_jstebeat] = rightsample;
       } else {
         with (this) {
-          kjsjstebeat_result = eval(bytebeatCode);
+          kjsjstebeat_result = bytebeat_func(t);
         }
         if (bytebeatMode === "bb") {
           sample = (kjsjstebeat_result & 255) / 128 - 1;
