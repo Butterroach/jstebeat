@@ -1,15 +1,36 @@
+:root {
+  --text-border: -2px -2px 0 black, -2px -1px 0 black, -2px 0px 0 black,
+    -2px 1px 0 black, -2px 2px 0 black, -1px -2px 0 black, -1px -1px 0 black,
+    -1px 0px 0 black, -1px 1px 0 black, -1px 2px 0 black, 0px -2px 0 black,
+    0px -1px 0 black, 0px 0px 0 black, 0px 1px 0 black, 0px 2px 0 black,
+    1px -2px 0 black, 1px -1px 0 black, 1px 0px 0 black, 1px 1px 0 black,
+    1px 2px 0 black, 2px -2px 0 black, 2px -1px 0 black, 2px 0px 0 black,
+    2px 1px 0 black, 2px 2px 0 black;
+  /* why */
+}
+
 body {
-  background-color: #1e1e1e;
+  background-color: #1e1e1e; /* default value */
   color: white;
   font-family: Arial, Helvetica, sans-serif;
 }
 
 h1 {
   text-align: center;
+  text-shadow: var(--text-border);
+}
+
+h2 {
+  text-shadow: var(--text-border);
+}
+
+p {
+  text-shadow: var(--text-border);
 }
 
 a {
   text-align: center;
+  text-shadow: var(--text-border);
 }
 
 a:link {
@@ -20,16 +41,22 @@ a:visited {
   color: #00da75;
 }
 
+label {
+  text-shadow: var(--text-border);
+}
+
 #cont1 {
   text-align: center;
 }
 
 ste {
   color: #00ff00;
+  text-shadow: var(--text-border);
 }
 
 reo {
   color: #ff00ff;
+  text-shadow: var(--text-border);
 }
 
 #noscripttext {

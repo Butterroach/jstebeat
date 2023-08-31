@@ -4,6 +4,23 @@
 
 let isPlaying;
 
+setTimeout(
+  () =>
+    localStorage.getItem("backgroundColor") === null
+      ? localStorage.setItem("backgroundColor", "#1e1e1e")
+      : ((document.body.style.backgroundColor =
+          localStorage.getItem("backgroundColor")),
+        (document.getElementById("background-color").value =
+          localStorage.getItem("backgroundColor"))),
+  1
+); // I CLEARLY DON'T KNOW WHAT I'M DOING
+
+function updateBackground() {
+  const color = document.getElementById("background-color").value;
+  document.body.style.backgroundColor = color;
+  localStorage.setItem("backgroundColor", color);
+}
+
 function base64ToBytes(base64) {
   const binString = atob(base64);
   return Uint8Array.from(binString, (m) => m.codePointAt(0));
