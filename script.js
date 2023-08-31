@@ -102,7 +102,7 @@ function playBytebeat() {
   let bytebeatCode = document.getElementById("bytebeat-code").value; // not a constant since it will be modified if its a minibake
   const sampleRate = document.getElementById("sample-rate").value;
   const bytebeatMode = document.getElementById("mode").value;
-  audioContext = new (window.AudioContext || window.webkitAudioContext)({
+  audioContext = new window.AudioContext({
     sampleRate: parseInt(sampleRate),
   });
   const bufferSize = 4096;
