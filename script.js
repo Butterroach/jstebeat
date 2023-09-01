@@ -4,6 +4,14 @@
 
 let isPlaying;
 
+math_items = Object.getOwnPropertyNames(Math);
+for (let item in math_items) {
+  // create math aliases
+  item = math_items[item];
+  this[item] = Math[item];
+}
+int = Math.floor; // honorable mention
+
 setTimeout(
   () =>
     localStorage.getItem("backgroundColor") === null
