@@ -1,4 +1,6 @@
-# jstebeat
+[![JStebeat logo](jstebeat-logo.webp)](https://butterroach.github.io/jstebeat/)
+
+# [JStebeat](https://butterroach.github.io/jstebeat/)
 
 Online bytebeat player with some examples
 
