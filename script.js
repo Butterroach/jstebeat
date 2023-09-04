@@ -3,6 +3,30 @@
 // btw your player hangs sometimes on me on firefox please test it for firefox too there are firefox users too yknow??!??!@!?@?!@?!
 
 let isPlaying;
+let exoticwarningheader = document.createElement("h1");
+let exoticwarningtext = document.createElement("p");
+let nonexoticbutton = document.createElement("button");
+exoticwarningheader.innerText = "EXOTIC WARNING!";
+exoticwarningtext.innerText =
+  "You're using an exotic mode. This probably won't work in other players (that don't have this mode). You can click the button below to copy a non-exotic version into your clipboard.";
+nonexoticbutton.type = "button"; // why do i have to specify that a button is a button?
+nonexoticbutton.innerText = nonexoticorigtext =
+  "Copy non-exotic version into clipboard ✨ (result should be played as floatbeat)";
+nonexoticbutton.onclick = async function () {
+  if ((bytebeatmode = document.getElementById("mode").value) === "4096exotic") {
+    await navigator.clipboard.writeText(
+      "((" + document.getElementById("bytebeat-code").value + ")&4095)/2048-1"
+    );
+    nonexoticbutton.textContent = "Copied! ✨";
+    setTimeout(function () {
+      nonexoticbutton.textContent = nonexoticorigtext;
+    }, 3000);
+  } else {
+    console.warn(
+      "you forgot to add a check in the nonexoticbutton.onclick function"
+    );
+  }
+};
 
 math_items = Object.getOwnPropertyNames(Math);
 for (let item in math_items) {
@@ -23,6 +47,30 @@ setTimeout(
   1
 ); // I CLEARLY DON'T KNOW WHAT I'M DOING
 
+setTimeout(
+  (toggleexoticwarning = () => {
+    const bytebeatMode = document.getElementById("mode").value;
+    if (bytebeatMode.endsWith("exotic")) {
+      document.body.appendChild(exoticwarningheader);
+      document.body.appendChild(exoticwarningtext);
+      document.body.appendChild(nonexoticbutton);
+      document
+        .getElementById("customization-settings-header")
+        .before(exoticwarningheader);
+      document
+        .getElementById("customization-settings-header")
+        .before(exoticwarningtext);
+      document
+        .getElementById("customization-settings-header")
+        .before(nonexoticbutton);
+    } else {
+      exoticwarningheader.remove();
+      exoticwarningtext.remove();
+      nonexoticbutton.remove();
+    }
+  }),
+  1
+);
 function updateBackground() {
   const color = document.getElementById("background-color").value;
   document.body.style.backgroundColor = color;
@@ -156,8 +204,14 @@ function playBytebeat() {
         } else if (bytebeatMode === "fb") {
           leftsample = kjsjstebeat_result[0];
           rightsample = kjsjstebeat_result[1];
+        } else if (bytebeatMode === "4096exotic") {
+          leftsample = (kjsjstebeat_result[0] & 4095) / 2048 - 1;
+          rightsample = (kjsjstebeat_result[1] & 4095) / 2048 - 1;
         } else {
           // just in case
+          t == 1
+            ? console.warn("This bytebeat mode is invalid... " + bytebeatMode)
+            : 0;
           leftsample = (kjsjstebeat_result & 255) / 128 - 1;
           rightsample = (kjsjstebeat_result & 255) / 128 - 1;
         }
@@ -173,7 +227,12 @@ function playBytebeat() {
           sample = numToInt8(kjsjstebeat_result) / 128;
         } else if (bytebeatMode === "fb") {
           sample = kjsjstebeat_result;
+        } else if (bytebeatMode === "4096exotic") {
+          sample = (kjsjstebeat_result & 4095) / 2048 - 1;
         } else {
+          t == 1
+            ? console.warn("This bytebeat mode is invalid... " + bytebeatMode)
+            : 0;
           sample = (kjsjstebeat_result & 255) / 128 - 1; // just in case
         }
         outputBuffer[i_jstebeat] = sample;

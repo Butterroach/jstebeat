@@ -70,10 +70,11 @@ t/=4.42,max(min((t*(21&(t>>11)+1)&128|sin(13*cbrt(t*'20233440'[t>>11&7]%4096))*6
       <br />
       <label for="sample-rate">Sample rate (in Hz):</label>
       <input id="sample-rate" type="number" value="48000" />
-      <select id="mode" title="Mode">
+      <select id="mode" title="Mode" onchange="toggleexoticwarning()">
         <option value="bb" selected>Bytebeat</option>
         <option value="sbb">Signed bytebeat</option>
         <option value="fb">Floatbeat</option>
+        <option value="4096exotic">4096</option>
       </select>
       <br />
       <button type="button" onclick="playBytebeat()">Play</button>
@@ -85,7 +86,7 @@ t/=4.42,max(min((t*(21&(t>>11)+1)&128|sin(13*cbrt(t*'20233440'[t>>11&7]%4096))*6
       <button id="copyhashbutt" type="button" onclick="copyHash()">
         Copy hash
       </button>
-      <h2>Customization settings</h2>
+      <h2 id="customization-settings-header">Customization settings</h2>
       <label for="background-color">Background color:</label>
       <input type="color" id="background-color" onchange="updateBackground()" />
       <button type="button" onclick="resetBackground()">Reset</button>
