@@ -3,6 +3,7 @@
 // btw your player hangs sometimes on me on firefox please test it for firefox too there are firefox users too yknow??!??!@!?@?!@?!
 
 let isPlaying;
+let AlreadyAppended = false;
 let exoticwarningheader = document.createElement("h1");
 let exoticwarningtext = document.createElement("p");
 let nonexoticbutton = document.createElement("button");
@@ -47,30 +48,35 @@ setTimeout(
   1
 ); // I CLEARLY DON'T KNOW WHAT I'M DOING
 
-setTimeout(
+setInterval(
   (toggleexoticwarning = () => {
     const bytebeatMode = document.getElementById("mode").value;
     if (bytebeatMode.endsWith("exotic")) {
-      document.body.appendChild(exoticwarningheader);
-      document.body.appendChild(exoticwarningtext);
-      document.body.appendChild(nonexoticbutton);
-      document
-        .getElementById("customization-settings-header")
-        .before(exoticwarningheader);
-      document
-        .getElementById("customization-settings-header")
-        .before(exoticwarningtext);
-      document
-        .getElementById("customization-settings-header")
-        .before(nonexoticbutton);
+      if (!AlreadyAppended) {
+        AlreadyAppended = true;
+        document.body.appendChild(exoticwarningheader);
+        document.body.appendChild(exoticwarningtext);
+        document.body.appendChild(nonexoticbutton);
+        document
+          .getElementById("customization-settings-header")
+          .before(exoticwarningheader);
+        document
+          .getElementById("customization-settings-header")
+          .before(exoticwarningtext);
+        document
+          .getElementById("customization-settings-header")
+          .before(nonexoticbutton);
+      }
     } else {
+      AlreadyAppended = false;
       exoticwarningheader.remove();
       exoticwarningtext.remove();
       nonexoticbutton.remove();
     }
   }),
-  1
-);
+  100
+); // surprisingly this doesn't lag on chrome
+
 function updateBackground() {
   const color = document.getElementById("background-color").value;
   document.body.style.backgroundColor = color;
