@@ -179,7 +179,7 @@ function playBytebeat() {
   ) {
     bytebeatCode = eval(bytebeatCode.replace("eval", ""));
   }
-  bytebeat_func = Function("t", `return ${bytebeatCode};`);
+  bytebeat_func = Function("t", `return 0,\n${bytebeatCode || 0};`);
   bytebeat_func(0); // turns out this fixes the old issue of how you cant do t?0:x=0
   const scriptNode = audioContext.createScriptProcessor(
     bufferSize,
