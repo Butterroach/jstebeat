@@ -159,6 +159,14 @@ function numToInt8(num) {
   return arr[0];
 }
 
+dontdelete = [];
+
+for (let prop in this) {
+  if (this.hasOwnProperty(prop)) {
+    dontdelete.push(prop); // all variables defined at this point should NOT be deleted
+  }
+}
+
 function playBytebeat() {
   if (isPlaying) {
     return;
@@ -252,4 +260,14 @@ function playBytebeat() {
 function stopBytebeat() {
   audioContext.suspend();
   isPlaying = false;
+  console.log(dontdelete);
+  for (let prop in this) {
+    if (
+      this.hasOwnProperty(prop) &&
+      !dontdelete.includes(prop) &&
+      typeof Math[prop] === "undefined"
+    ) {
+      delete this[prop]; // this definitely will not break anything
+    }
+  }
 }
