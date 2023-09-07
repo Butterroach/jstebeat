@@ -260,7 +260,6 @@ function playBytebeat() {
 function stopBytebeat() {
   audioContext.suspend();
   isPlaying = false;
-  console.log(dontdelete);
   for (let prop in this) {
     if (
       this.hasOwnProperty(prop) &&
