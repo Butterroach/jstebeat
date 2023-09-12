@@ -1,6 +1,7 @@
-// psubscirbe you have 19 webhint warnings please fix your player
+// psubscirbe you have 19+ webhint warnings please fix your player
 // i know mine has like 6 warnings but i can only fix 2 one of those and 1 of the warnings i can fix isnt all that important
-// btw your player hangs sometimes on me on firefox please test it for firefox too there are firefox users too yknow??!??!@!?@?!@?!
+// btw i changed how it makes the math aliases it's shorter you can copypaste the new one at least?
+// kthxbye!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 let isPlaying;
 let AlreadyAppended = false;
