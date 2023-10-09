@@ -75,6 +75,7 @@ t/=4.42,max(min((t*(21&(t>>11)+1)&128|sin(13*cbrt(t*'20233440'[t>>11&7]%4096))*6
         <option value="sbb" title="Like bytebeat, but expects an output from -127 to 128 instead. Wraps around.">Signed bytebeat</option>
         <option value="fb" title="Floatbeat. Higher quality. Expects a floating point output from -1.0 to 1.0. Doesn't wrap around.">Floatbeat</option>
         <option value="4096exotic" title="EXOTIC. Like bytebeat, but expects an output from 0 to 4095 instead. Wraps around.">4096</option>
+        <option value="detailedbeatexotic" title="EXOTIC. Like bytebeat, but floating point detail isn't lost. Uses a more complicated method to wrap stuff around.">Detailedbeat</option>
       </select>
       <br />
       <button type="button" onclick="playBytebeat()">Play</button>
