@@ -1,220 +1,253 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link href="jstebeat-favicon.ico" rel="shortcut icon" />
-    <link href="index.css" rel="stylesheet" />
-    <title>JStebeat</title>
-    <script src="script.js"></script>
-  </head>
-  <body>
-    <noscript>
-      <h1 id="noscripttext">
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        THIS USES & REQUIRES JAVASCRIPT ENABLE JAVASCRIPT TO USE THIS <br />
-        WHAT ARE YOU EVEN DOING HOW DO YOU SURVIVE WITHOUT JAVASCRIPT
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-      </h1>
-    </noscript>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link href="jstebeat-favicon.ico" rel="shortcut icon" />
+        <link href="index.css" rel="stylesheet" />
+        <title>JStebeat</title>
+        <script src="script.js"></script>
+    </head>
+    <body>
+        <noscript>
+            <h1 id="noscripttext">
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                THIS USES & REQUIRES JAVASCRIPT ENABLE JAVASCRIPT TO USE THIS
+                <br />
+                WHAT ARE YOU EVEN DOING HOW DO YOU SURVIVE WITHOUT JAVASCRIPT
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+            </h1>
+        </noscript>
 
-    <h1>
-      <img
-        src="jstebeat-logo.webp"
-        alt="JStebeat"
-        title="JStebeat"
-        width="144"
-        height="144"
-      />
-      v2.13.0
-    </h1>
-    <div id="cont1">
-      <label for="bytebeat-code">Bytebeat code:</label>
-      <textarea id="bytebeat-code" rows="20" cols="150">
+        <h1>
+            <img
+                src="jstebeat-logo.webp"
+                alt="JStebeat"
+                title="JStebeat"
+                width="144"
+                height="144"
+            />
+            v2.13.1
+        </h1>
+        <div id="cont1">
+            <label for="bytebeat-code">Bytebeat code:</label>
+            <textarea id="bytebeat-code" rows="20" cols="150">
 t/=4.42,max(min((t*(21&(t>>11)+1)&128|sin(13*cbrt(t*'20233440'[t>>11&7]%4096))*64+64)%256/1.4+(random()*2-1)/(1+t/1024%8)*64+32,255),0)</textarea
-      >
-      <br />
-      <label for="sample-rate">Sample rate (in Hz):</label>
-      <input id="sample-rate" type="number" value="48000" />
-      <select id="mode" title="Mode" onchange="toggleexoticwarning()">
-        <option value="bb" title="The original bytebeat. Expects an integer output from 0 to 255. Wraps around." selected>Bytebeat</option>
-        <option value="sbb" title="Like bytebeat, but expects an output from -127 to 128 instead. Wraps around.">Signed bytebeat</option>
-        <option value="fb" title="Floatbeat. Higher quality. Expects a floating point output from -1.0 to 1.0. Doesn't wrap around.">Floatbeat</option>
-        <option value="4096exotic" title="EXOTIC. Like bytebeat, but expects an output from 0 to 4095 instead. Wraps around.">4096</option>
-        <option value="detailedbeatexotic" title="EXOTIC. Like bytebeat, but floating point detail isn't lost. Uses a more complicated method to wrap stuff around.">Detailedbeat</option>
-      </select>
-      <br />
-      <button type="button" onclick="playBytebeat()">Play</button>
-      <button type="button" onclick="stopBytebeat()">Stop</button>
-      <br />
-      <button id="copylinkbutt" type="button" onclick="copyLink()">
-        Copy link
-      </button>
-      <button id="copyhashbutt" type="button" onclick="copyHash()">
-        Copy hash
-      </button>
-      <h2 id="customization-settings-header">Customization settings</h2>
-      <label for="background-color">Background color:</label>
-      <input type="color" id="background-color" onchange="updateBackground()" />
-      <button type="button" onclick="resetBackground()">Reset</button>
-      <h2>Examples</h2>
-      <p>
-        <a
-          href="javascript:hash_change('#dC89NC44LHQ+PjEyJiYoc2luKCh0LSh0Pj40JnQ+PjgpJnQ+PjEyKS0xKStzaW4oMjUqY2JydCh0JTQwOTYpKSsocmFuZG9tKCkqKH50Pj4nMzI0MTUzNDInW3Q+PjE3JjddJjI1NSk+PjYpKS80LjUtLjI1@48000]fb')"
-          >"the funky echo"</a
-        >
-        (by butterroach, Remix of
-        <a
-          href="https://www.reddit.com/r/bytebeat/comments/20km9l/cool_equations/"
-          >The 8-bit echo</a
-        >
-        by a2aaron)
-      </p>
-      <p>
-        <a
-          href="javascript:hash_change('#dC89Nix0Kj0xLjIsKHNpbihzaW4odC8xMDApLXQvKDIrKHQ+PjEwJnQ+PjEyKSU5KSkrc2luKDE5KmNicnQodCU0MDk2KSkrKHJhbmRvbSgpKjItMSkvKDIrKHQrNDA5NikvNDA5NiUyKSkvMyoxMjcrMTI3@48000]bb')"
-          >"dj trill"</a
-        >
-        (by butterroach, Remix of
-        <a
-          href="https://www.reddit.com/r/bytebeat/comments/20km9l/cool_equations/"
-          >Trill</a
-        >
-        by a2aaron)
-      </p>
-      <p>
-        <a
-          href="javascript:hash_change('#dCooMHhDQTk4Q0E5OENBOThDQT4+KHQ+PjkmMHhDQTk4Q0E5QT4+KHQ+PjEwKSkmMTUpfHQ+Pjg=@8000]bb')"
-          >"sweet6"</a
-        >
-        (by butterroach, Remix of
-        <a href="http://www.pouet.net/topic.php?which=8357&page=9#c388902"
-          >CA98</a
-        >
-        by rrrola)
-      </p>
-      <p>
-        <a
-          href="javascript:hash_change('#c2luKDE5KmNicnQodConMTEzMzU1NzknW3Q+PjEzKzEmN10lODE5MykpKjQ5K3Npbih0Kig0My0xJih0Pj4xMSkrMy0xKS81KSo1MSsyMSoocmFuZG9tKCkqKH50Pj4zJjI1NSk+PjctMSkrMTA5@16001]bb')"
-          >"00D-C1TY"</a
-        >
-        (by butterroach, Remix of the 42 melody (
-        <a href="javascript:hash_change('#dCoodD4+MTAmNDIp@8000]bb')"
-          >t*(t>>10&42)</a
-        >
-        ))
-      </p>
-      <p>
-        <a href="javascript:hash_change('#dCoodD4+MTB8dCkldCoqMg==@66200]bb')"
-          >"rhythmic modulation"</a
-        >
-        (by butterroach)
-      </p>
-      <p>
-        <a
-          href="javascript:hash_change('#W3Npbih0LzMyKS8oMit0LzIwNDglKHQmNjU1MzY/MTY6OCkpLHNpbih0LzE2KS8oMit0LzIwNDglKHQmNjU1MzY/ODoxNikpXQ==@48000]fb')"
-          >"sinpop6"</a
-        >
-        (by butterroach, <ste>ste</ste><reo>reo</reo>)
-      </p>
-      <p>
-        <a
-          href="javascript:hash_change('#KHQqKHQ+PjV8dD4+OCk+Pih0Pj4xNiYzKSYyNTUpLzIuNStzaW4oMjUqY2JydCh0JTQwOTYpKSo2NCs2Mw==@22050]bb')"
-          >tejeez sped up and with a kick</a
-        >
-        (by butterroach, no name, Remix of tejeez (
-        <a
-          href="javascript:hash_change('#dCoodD4+NXx0Pj44KT4+KHQ+PjE2KQ==@8000]bb')"
-          >t*(t>>5|t>>8)>>(t>>16)</a
-        >
-        ))
-      </p>
-      <p>
-        <a
-          href="javascript:hash_change('#c2luKCh0fHQ+PjE0KnQpPj4xMTw8KHQ8PDUpJjQ0KSp0@44100]bb')"
-          >"casually walking by"</a
-        >
-        (by butterroach)
-      </p>
-      <p>
-        <a
-          href="javascript:hash_change('#dCp0Pj4odD4+MTAmNysodD4+MTUpKQ==@11025]bb')"
-          >"glitchy melody"</a
-        >
-        (by butterroach)
-      </p>
-      <p>
-        <a
-          href="javascript:hash_change('#dC89NC40MixtYXgobWluKCh0KigyMSYodD4+MTEpKzEpJjEyOHxzaW4oMTMqY2JydCh0KicyMDIzMzQ0MCdbdD4+MTEmN10lNDA5NikpKjY0KzY0KSUyNTYvMS40KyhyYW5kb20oKSoyLTEpLygxK3QvMTAyNCU4KSo2NCszMiwyNTUpLDAp@48000]bb')"
-          >"42 liters" (default code)</a
-        >
-        (by butterroach, Remix of
-        <a
-          href="https://www.reddit.com/r/bytebeat/comments/1625h9m/42_melody_remix/"
-          >42 melody remix</a
-        >
-        by MentionBig3715)
-      </p>
-      <p>
-        <a
-          href="javascript:hash_change('#dD8wOgooQT14PT5BcnJheSh4KS5maWxsKDApLGE9QShyPTIyMDUwKSxiPUEoUj00NDEwMCksYz1BKHU9MzJlMyksZD1BKFU9NDhlMykpLAoKbT1NPXNpbih0Lyg3LShmPXQ+PjE0JjMpKyhmPzA6KGU9dD4+MTgmMyktMz9lOi0yKSkvMikvKDIrdC80MDk2JTQpLApoPUg9cmFuZG9tKCkqKH50Pj44JjI1NSkvMTAyNCwKCnQ+PjIwJiYodD4+MjA+M3x8KAoJbSs9YVt0JXJdLAoJTSs9Ylt0JVJdLAoJaCs9Y1t0JXVdLAoJSCs9ZFt0JVVdLAoJYVt0JXJdPW0vMiwKCWJbdCVSXT1NLzIsCgljW3QldV09aC8yLAoJZFt0JVVdPUgvMgopKSwKCltbbSxtK2gsbStoLG0sbV1bdD4+MjBdLFtNLE0rSCxNK0gsTSxNXVt0Pj4yMF1d@48000]fb')"
-          >"pluto"</a
-        >
-        (by butterroach, <ste>ste</ste><reo>reo</reo>)
-      </p>
-      <p>
-        <a
-          href="javascript:hash_change('#dCoodC82Pj4xMCY0MikvMg==@48000]4096exotic')"
-        >"tired 42 melody"</a
-        > 
-        (by butterroach, <strong>EXOTIC</strong> Remix of the 42 melody (
-          <a href="javascript:hash_change('#dCoodD4+MTAmNDIp@8000]bb')"
-            >t*(t>>10&42)</a
-          >
-          ))
-        </p>
-      </p>
-      <p>
-        <a
-          href="javascript:hash_change('#dD8oeD0oc2luKHQvMioqeCkreCoxMDApLzEwMSkqNDp4PURhdGUubm93KCk=@48000]fb')"
-        >"brownian noise"</a
-        > 
-        (by butterroach)
-      </p>
-    </div>
-  </body>
+            >
+            <br />
+            <label for="sample-rate">Sample rate (in Hz):</label>
+            <input id="sample-rate" type="number" value="48000" />
+            <select id="mode" title="Mode" onchange="toggleexoticwarning()">
+                <option
+                    value="bb"
+                    title="The original bytebeat. Expects an integer output from 0 to 255. Wraps around."
+                    selected
+                >
+                    Bytebeat
+                </option>
+                <option
+                    value="sbb"
+                    title="Like bytebeat, but expects an output from -127 to 128 instead. Wraps around."
+                >
+                    Signed bytebeat
+                </option>
+                <option
+                    value="fb"
+                    title="Floatbeat. Higher quality. Expects a floating point output from -1.0 to 1.0. Doesn't wrap around."
+                >
+                    Floatbeat
+                </option>
+                <option
+                    value="4096exotic"
+                    title="EXOTIC. Like bytebeat, but expects an output from 0 to 4095 instead. Wraps around."
+                >
+                    4096
+                </option>
+                <option
+                    value="detailedbeatexotic"
+                    title="EXOTIC. Like bytebeat, but floating point detail isn't lost. Uses a more complicated method to wrap stuff around."
+                >
+                    Detailedbeat
+                </option>
+            </select>
+            <br />
+            <button type="button" onclick="playBytebeat()">Play</button>
+            <button type="button" onclick="stopBytebeat()">Stop</button>
+            <br />
+            <button id="copylinkbutt" type="button" onclick="copyLink()">
+                Copy link
+            </button>
+            <button id="copyhashbutt" type="button" onclick="copyHash()">
+                Copy hash
+            </button>
+            <h2 id="customization-settings-header">Customization settings</h2>
+            <label for="background-color">Background color:</label>
+            <input
+                type="color"
+                id="background-color"
+                onchange="updateBackground()"
+            />
+            <button type="button" onclick="resetBackground()">Reset</button>
+            <h2>Examples</h2>
+            <p>
+                <a
+                    href="javascript:hash_change('#dC89NC44LHQ+PjEyJiYoc2luKCh0LSh0Pj40JnQ+PjgpJnQ+PjEyKS0xKStzaW4oMjUqY2JydCh0JTQwOTYpKSsocmFuZG9tKCkqKH50Pj4nMzI0MTUzNDInW3Q+PjE3JjddJjI1NSk+PjYpKS80LjUtLjI1@48000]fb')"
+                    >"the funky echo"</a
+                >
+                (by butterroach, Remix of
+                <a
+                    href="https://www.reddit.com/r/bytebeat/comments/20km9l/cool_equations/"
+                    >The 8-bit echo</a
+                >
+                by a2aaron)
+            </p>
+            <p>
+                <a
+                    href="javascript:hash_change('#dC89Nix0Kj0xLjIsKHNpbihzaW4odC8xMDApLXQvKDIrKHQ+PjEwJnQ+PjEyKSU5KSkrc2luKDE5KmNicnQodCU0MDk2KSkrKHJhbmRvbSgpKjItMSkvKDIrKHQrNDA5NikvNDA5NiUyKSkvMyoxMjcrMTI3@48000]bb')"
+                    >"dj trill"</a
+                >
+                (by butterroach, Remix of
+                <a
+                    href="https://www.reddit.com/r/bytebeat/comments/20km9l/cool_equations/"
+                    >Trill</a
+                >
+                by a2aaron)
+            </p>
+            <p>
+                <a
+                    href="javascript:hash_change('#dCooMHhDQTk4Q0E5OENBOThDQT4+KHQ+PjkmMHhDQTk4Q0E5QT4+KHQ+PjEwKSkmMTUpfHQ+Pjg=@8000]bb')"
+                    >"sweet6"</a
+                >
+                (by butterroach, Remix of
+                <a
+                    href="http://www.pouet.net/topic.php?which=8357&page=9#c388902"
+                    >CA98</a
+                >
+                by rrrola)
+            </p>
+            <p>
+                <a
+                    href="javascript:hash_change('#c2luKDE5KmNicnQodConMTEzMzU1NzknW3Q+PjEzKzEmN10lODE5MykpKjQ5K3Npbih0Kig0My0xJih0Pj4xMSkrMy0xKS81KSo1MSsyMSoocmFuZG9tKCkqKH50Pj4zJjI1NSk+PjctMSkrMTA5@16001]bb')"
+                    >"00D-C1TY"</a
+                >
+                (by butterroach, Remix of the 42 melody (
+                <a href="javascript:hash_change('#dCoodD4+MTAmNDIp@8000]bb')"
+                    >t*(t>>10&42)</a
+                >
+                ))
+            </p>
+            <p>
+                <a
+                    href="javascript:hash_change('#dCoodD4+MTB8dCkldCoqMg==@66200]bb')"
+                    >"rhythmic modulation"</a
+                >
+                (by butterroach)
+            </p>
+            <p>
+                <a
+                    href="javascript:hash_change('#W3Npbih0LzMyKS8oMit0LzIwNDglKHQmNjU1MzY/MTY6OCkpLHNpbih0LzE2KS8oMit0LzIwNDglKHQmNjU1MzY/ODoxNikpXQ==@48000]fb')"
+                    >"sinpop6"</a
+                >
+                (by butterroach, <ste>ste</ste><reo>reo</reo>)
+            </p>
+            <p>
+                <a
+                    href="javascript:hash_change('#KHQqKHQ+PjV8dD4+OCk+Pih0Pj4xNiYzKSYyNTUpLzIuNStzaW4oMjUqY2JydCh0JTQwOTYpKSo2NCs2Mw==@22050]bb')"
+                    >tejeez sped up and with a kick</a
+                >
+                (by butterroach, no name, Remix of tejeez (
+                <a
+                    href="javascript:hash_change('#dCoodD4+NXx0Pj44KT4+KHQ+PjE2KQ==@8000]bb')"
+                    >t*(t>>5|t>>8)>>(t>>16)</a
+                >
+                ))
+            </p>
+            <p>
+                <a
+                    href="javascript:hash_change('#c2luKCh0fHQ+PjE0KnQpPj4xMTw8KHQ8PDUpJjQ0KSp0@44100]bb')"
+                    >"casually walking by"</a
+                >
+                (by butterroach)
+            </p>
+            <p>
+                <a
+                    href="javascript:hash_change('#dCp0Pj4odD4+MTAmNysodD4+MTUpKQ==@11025]bb')"
+                    >"glitchy melody"</a
+                >
+                (by butterroach)
+            </p>
+            <p>
+                <a
+                    href="javascript:hash_change('#dC89NC40MixtYXgobWluKCh0KigyMSYodD4+MTEpKzEpJjEyOHxzaW4oMTMqY2JydCh0KicyMDIzMzQ0MCdbdD4+MTEmN10lNDA5NikpKjY0KzY0KSUyNTYvMS40KyhyYW5kb20oKSoyLTEpLygxK3QvMTAyNCU4KSo2NCszMiwyNTUpLDAp@48000]bb')"
+                    >"42 liters" (default code)</a
+                >
+                (by butterroach, Remix of
+                <a
+                    href="https://www.reddit.com/r/bytebeat/comments/1625h9m/42_melody_remix/"
+                    >42 melody remix</a
+                >
+                by MentionBig3715)
+            </p>
+            <p>
+                <a
+                    href="javascript:hash_change('#dD8wOgooQT14PT5BcnJheSh4KS5maWxsKDApLGE9QShyPTIyMDUwKSxiPUEoUj00NDEwMCksYz1BKHU9MzJlMyksZD1BKFU9NDhlMykpLAoKbT1NPXNpbih0Lyg3LShmPXQ+PjE0JjMpKyhmPzA6KGU9dD4+MTgmMyktMz9lOi0yKSkvMikvKDIrdC80MDk2JTQpLApoPUg9cmFuZG9tKCkqKH50Pj44JjI1NSkvMTAyNCwKCnQ+PjIwJiYodD4+MjA+M3x8KAoJbSs9YVt0JXJdLAoJTSs9Ylt0JVJdLAoJaCs9Y1t0JXVdLAoJSCs9ZFt0JVVdLAoJYVt0JXJdPW0vMiwKCWJbdCVSXT1NLzIsCgljW3QldV09aC8yLAoJZFt0JVVdPUgvMgopKSwKCltbbSxtK2gsbStoLG0sbV1bdD4+MjBdLFtNLE0rSCxNK0gsTSxNXVt0Pj4yMF1d@48000]fb')"
+                    >"pluto"</a
+                >
+                (by butterroach, <ste>ste</ste><reo>reo</reo>)
+            </p>
+            <p>
+                <a
+                    href="javascript:hash_change('#dCoodC82Pj4xMCY0MikvMg==@48000]4096exotic')"
+                    >"tired 42 melody"</a
+                >
+                (by butterroach, <strong>EXOTIC</strong> Remix of the 42 melody
+                (
+                <a href="javascript:hash_change('#dCoodD4+MTAmNDIp@8000]bb')"
+                    >t*(t>>10&42)</a
+                >
+                ))
+            </p>
+            <p>
+                <a
+                    href="javascript:hash_change('#dD8oeD0oc2luKHQvMioqeCkreCoxMDApLzEwMSkqNDp4PURhdGUubm93KCk=@48000]fb')"
+                    >"brownian noise"</a
+                >
+                (by butterroach)
+            </p>
+        </div>
+    </body>
 </html>

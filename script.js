@@ -13,7 +13,7 @@ exoticwarningtext.innerText =
     "You're using an exotic mode. This probably won't work in other players (that don't have this mode). You can click the button below to copy a non-exotic version into your clipboard.";
 nonexoticbutton.type = "button"; // why do i have to specify that a button is a button?
 nonexoticbutton.innerText = nonexoticorigtext =
-    "Copy non-exotic version into clipboard ✨ (result should be played as floatbeat)";
+    "Copy non-exotic version into clipboard ✨ (result should be played as floatbeat, THIS WILL NOT WORK WITH STEREO STUFF)";
 nonexoticbutton.onclick = async function () {
     if (
         (bytebeatmode = document.getElementById("mode").value) === "4096exotic"
