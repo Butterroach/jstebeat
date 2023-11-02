@@ -45,6 +45,13 @@ label {
     text-shadow: var(--text-border);
 }
 
+#bytebeat-code {
+    font-family: Consolas, Monaco, Lucida Console, Liberation Mono,
+        DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New; /* i stole this btw hehe */
+    background-color: #000000;
+    color: white;
+}
+
 #cont1 {
     text-align: center;
 }
