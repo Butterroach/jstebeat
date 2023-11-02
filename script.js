@@ -255,8 +255,8 @@ function playBytebeat() {
                               "This bytebeat mode is invalid... " + bytebeatMode
                           )
                         : 0;
-                    leftsample = (kjsjstebeat_result & 255) / 128 - 1;
-                    rightsample = (kjsjstebeat_result & 255) / 128 - 1;
+                    leftsample = (kjsjstebeat_result[0] & 255) / 128 - 1;
+                    rightsample = (kjsjstebeat_result[1] & 255) / 128 - 1;
                 }
                 leftOutputBuffer[i_jstebeat] = leftsample;
                 rightOutputBuffer[i_jstebeat] = rightsample;
@@ -274,8 +274,9 @@ function playBytebeat() {
                     sample = (kjsjstebeat_result & 4095) / 2048 - 1;
                 } else if (bytebeatMode === "detailedbeatexotic") {
                     sample =
-                        ((kjsjstebeat_result & 255) +
-                            (Math.abs(kjsjstebeat_result) % 1)) /
+                        (((kjsjstebeat_result & 255) +
+                            (Math.abs(kjsjstebeat_result) % 1)) %
+                            256) /
                             128 -
                         1;
                 } else {
