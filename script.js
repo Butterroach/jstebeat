@@ -171,13 +171,6 @@ async function copyHash() {
     }, 3000);
 }
 
-function numToInt8(num) {
-    // this is easier with a function
-    const arr = new Int8Array(1);
-    arr[0] = num;
-    return arr[0];
-}
-
 dontdelete = [];
 
 for (let prop in this) {
@@ -232,8 +225,10 @@ function playBytebeat() {
                     leftsample = (kjsjstebeat_result[0] & 255) / 128 - 1;
                     rightsample = (kjsjstebeat_result[1] & 255) / 128 - 1;
                 } else if (bytebeatMode === "sbb") {
-                    leftsample = numToInt8(kjsjstebeat_result[0]) / 128;
-                    rightsample = numToInt8(kjsjstebeat_result[1]) / 128;
+                    leftsample =
+                        ((kjsjstebeat_result[0] + 128) & 255) / 128 - 1;
+                    rightsample =
+                        ((kjsjstebeat_result[1] + 128) & 255) / 128 - 1;
                 } else if (bytebeatMode === "fb") {
                     leftsample = kjsjstebeat_result[0];
                     rightsample = kjsjstebeat_result[1];
@@ -272,7 +267,7 @@ function playBytebeat() {
                 if (bytebeatMode === "bb") {
                     sample = (kjsjstebeat_result & 255) / 128 - 1;
                 } else if (bytebeatMode === "sbb") {
-                    sample = numToInt8(kjsjstebeat_result) / 128;
+                    sample = ((kjsjstebeat_result + 128) & 255) / 128 - 1;
                 } else if (bytebeatMode === "fb") {
                     sample = kjsjstebeat_result;
                 } else if (bytebeatMode === "4096exotic") {
