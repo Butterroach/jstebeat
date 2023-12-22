@@ -179,6 +179,25 @@ for (let prop in this) {
     }
 }
 
+function handle(bytebeatMode, value, t) {
+    // handles values and corrects them accordingly
+    if (bytebeatMode === "bb") {
+        return (value & 255) / 128 - 1;
+    } else if (bytebeatMode === "sbb") {
+        return ((value + 128) & 255) / 128 - 1;
+    } else if (bytebeatMode === "fb") {
+        return value;
+    } else if (bytebeatMode === "4096exotic") {
+        return (value & 4095) / 2048 - 1;
+    } else if (bytebeatMode === "detailedbeatexotic") {
+        return (((value & 255) + (Math.abs(value) % 1)) % 256) / 128 - 1;
+    }
+    if (t === 1) {
+        console.warn("This bytebeat mode is invalid... " + bytebeatMode);
+    }
+    return (value & 255) / 128 - 1; // just in case
+}
+
 function playBytebeat() {
     if (isPlaying) {
         return;
@@ -219,75 +238,17 @@ function playBytebeat() {
             t = t_jstebeat++;
             if (isStereo) {
                 with (this) {
-                    kjsjstebeat_result = bytebeat_func(t);
+                    result = bytebeat_func(t);
                 }
-                if (bytebeatMode === "bb") {
-                    leftsample = (kjsjstebeat_result[0] & 255) / 128 - 1;
-                    rightsample = (kjsjstebeat_result[1] & 255) / 128 - 1;
-                } else if (bytebeatMode === "sbb") {
-                    leftsample =
-                        ((kjsjstebeat_result[0] + 128) & 255) / 128 - 1;
-                    rightsample =
-                        ((kjsjstebeat_result[1] + 128) & 255) / 128 - 1;
-                } else if (bytebeatMode === "fb") {
-                    leftsample = kjsjstebeat_result[0];
-                    rightsample = kjsjstebeat_result[1];
-                } else if (bytebeatMode === "4096exotic") {
-                    leftsample = (kjsjstebeat_result[0] & 4095) / 2048 - 1;
-                    rightsample = (kjsjstebeat_result[1] & 4095) / 2048 - 1;
-                } else if (bytebeatMode === "detailedbeatexotic") {
-                    leftsample =
-                        (((kjsjstebeat_result[0] & 255) +
-                            (Math.abs(kjsjstebeat_result[0]) % 1)) %
-                            256) /
-                            128 -
-                        1;
-                    rightsample =
-                        (((kjsjstebeat_result[1] & 255) +
-                            (Math.abs(kjsjstebeat_result[1]) % 1)) %
-                            256) /
-                            128 -
-                        1;
-                } else {
-                    // just in case
-                    t == 1
-                        ? console.warn(
-                              "This bytebeat mode is invalid... " + bytebeatMode
-                          )
-                        : 0;
-                    leftsample = (kjsjstebeat_result[0] & 255) / 128 - 1;
-                    rightsample = (kjsjstebeat_result[1] & 255) / 128 - 1;
-                }
+                leftsample = handle(bytebeatMode, result[0], t);
+                rightsample = handle(bytebeatMode, result[1], t);
                 leftOutputBuffer[i_jstebeat] = leftsample;
                 rightOutputBuffer[i_jstebeat] = rightsample;
             } else {
                 with (this) {
-                    kjsjstebeat_result = bytebeat_func(t);
+                    result = bytebeat_func(t);
                 }
-                if (bytebeatMode === "bb") {
-                    sample = (kjsjstebeat_result & 255) / 128 - 1;
-                } else if (bytebeatMode === "sbb") {
-                    sample = ((kjsjstebeat_result + 128) & 255) / 128 - 1;
-                } else if (bytebeatMode === "fb") {
-                    sample = kjsjstebeat_result;
-                } else if (bytebeatMode === "4096exotic") {
-                    sample = (kjsjstebeat_result & 4095) / 2048 - 1;
-                } else if (bytebeatMode === "detailedbeatexotic") {
-                    sample =
-                        (((kjsjstebeat_result & 255) +
-                            (Math.abs(kjsjstebeat_result) % 1)) %
-                            256) /
-                            128 -
-                        1;
-                } else {
-                    t == 1
-                        ? console.warn(
-                              "This bytebeat mode is invalid... " + bytebeatMode
-                          )
-                        : 0;
-                    sample = (kjsjstebeat_result & 255) / 128 - 1; // just in case
-                }
-                outputBuffer[i_jstebeat] = sample;
+                outputBuffer[i_jstebeat] = handle(bytebeatMode, result, t);
             }
         }
     };
