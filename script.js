@@ -203,7 +203,8 @@ function playBytebeat() {
         stopBytebeat();
         playBytebeat();
         return;
-    } else isPlaying = true;
+    }
+    isPlaying = true;
     let bytebeatCode = document.getElementById("bytebeat-code").value; // not a constant since it will be modified if its a minibake
     const sampleRate = document.getElementById("sample-rate").value;
     const bytebeatMode = document.getElementById("mode").value;
