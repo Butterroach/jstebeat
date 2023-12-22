@@ -185,7 +185,7 @@ function handle(bytebeatMode, value, t) {
         return (value & 255) / 128 - 1;
     } else if (bytebeatMode === "sbb") {
         return ((value + 128) & 255) / 128 - 1;
-    } else if (bytebeatMode === "fb") {
+    } else if (bytebeatMode === "fb" || bytebeatMode === "func") {
         return value;
     } else if (bytebeatMode === "4096exotic") {
         return (value & 4095) / 2048 - 1;
@@ -218,37 +218,41 @@ function playBytebeat() {
     ) {
         bytebeatCode = eval(bytebeatCode.replace("eval", ""));
     }
-    bytebeat_func = Function("t", `return 0,\n${bytebeatCode || 0};`);
-    bytebeat_func(0);
-    const scriptNode = audioContext.createScriptProcessor(
-        bufferSize,
-        0,
-        (isStereo = Array.isArray(eval(bytebeatCode))) ? 2 : 1
-    );
+    if (bytebeatMode === "func") {
+        bytebeat_func = Function(bytebeatCode)();
+    } else {
+        bytebeat_func = Function("t", `return 0,\n${bytebeatCode || 0};`);
+        bytebeat_func(0);
+    }
+    const scriptNode = audioContext.createScriptProcessor(bufferSize, 0, 2);
     let t_jstebeat = 0; // different name to not break some stuff
     scriptNode.onaudioprocess = function (audioProcessingEvent) {
         let outputBuffer = audioProcessingEvent.outputBuffer;
-        if (isStereo) {
-            leftOutputBuffer = outputBuffer.getChannelData(0);
-            rightOutputBuffer = outputBuffer.getChannelData(1);
-        } else {
-            outputBuffer = outputBuffer.getChannelData(0);
-        }
+        leftOutputBuffer = outputBuffer.getChannelData(0);
+        rightOutputBuffer = outputBuffer.getChannelData(1);
         for (let i_jstebeat = 0; i_jstebeat < bufferSize; i_jstebeat++) {
             t = t_jstebeat++;
-            if (isStereo) {
-                with (this) {
+            with (this) {
+                if (bytebeatMode === "func") {
+                    result = bytebeat_func(t / sampleRate, sampleRate);
+                } else {
                     result = bytebeat_func(t);
                 }
-                leftsample = handle(bytebeatMode, result[0], t);
-                rightsample = handle(bytebeatMode, result[1], t);
-                leftOutputBuffer[i_jstebeat] = leftsample;
-                rightOutputBuffer[i_jstebeat] = rightsample;
+            }
+            if (Array.isArray(result)) {
+                leftOutputBuffer[i_jstebeat] = handle(
+                    bytebeatMode,
+                    result[0],
+                    t
+                );
+                rightOutputBuffer[i_jstebeat] = handle(
+                    bytebeatMode,
+                    result[1],
+                    t
+                );
             } else {
-                with (this) {
-                    result = bytebeat_func(t);
-                }
-                outputBuffer[i_jstebeat] = handle(bytebeatMode, result, t);
+                leftOutputBuffer[i_jstebeat] = handle(bytebeatMode, result, t);
+                rightOutputBuffer[i_jstebeat] = handle(bytebeatMode, result, t);
             }
         }
     };

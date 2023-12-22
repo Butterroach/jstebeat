@@ -92,6 +92,12 @@ t/=4.42,max(min((t*(21&(t>>11)+1)&128|sin(13*cbrt(t*'20233440'[t>>11&7]%4096))*6
                     Floatbeat
                 </option>
                 <option
+                    value="func"
+                    title="A little exotic. Like floatbeat, but your code is only ran once, and the time is provided in seconds. Your code is ran as raw JavaScript code, where the returned value is expected to be a function. The function is ran with two parameters specified. The first parameter is the time, but in seconds. The second parameter is the sample rate. See the two examples."
+                >
+                    Funcbeat
+                </option>
+                <option
                     value="4096exotic"
                     title="EXOTIC. Like bytebeat, but expects an output from 0 to 4095 instead. Wraps around."
                 >
