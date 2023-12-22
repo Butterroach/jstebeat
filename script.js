@@ -200,6 +200,8 @@ function handle(bytebeatMode, value, t) {
 
 function playBytebeat() {
     if (isPlaying) {
+        stopBytebeat();
+        playBytebeat();
         return;
     } else isPlaying = true;
     let bytebeatCode = document.getElementById("bytebeat-code").value; // not a constant since it will be modified if its a minibake
