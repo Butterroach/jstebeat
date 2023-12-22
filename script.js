@@ -113,7 +113,7 @@ function bytesToBase64(bytes) {
     );
     return btoa(binString);
 }
-// above functions stolen from MDN docs thank you so much
+// the 2 above functions are stolen from MDN docs thank you very much
 
 setTimeout(
     (hash_change = (hash = window.location.hash) => {
