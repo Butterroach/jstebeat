@@ -264,7 +264,11 @@ function playBytebeat() {
 }
 
 function stopBytebeat() {
-    audioContext.suspend();
+    try {
+        audioContext.suspend();
+    } catch (e) {
+        console.warn("smth went wrong with stopping", e);
+    }
     isPlaying = false;
     for (let prop in this) {
         if (
