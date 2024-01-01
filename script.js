@@ -249,7 +249,8 @@ function playBytebeat() {
                     result = bytebeat_func(t);
                 }
                 if (jsteDisplayText !== _last_jsteDisplayText) {
-                    displayText.innerText = jsteDisplayText;
+                    displayText.innerText =
+                        "​ ​ ​ ​" + jsteDisplayText + "​ ​ ​ ​"; // there are hidden characters here btw
                 }
             }
             if (Array.isArray(result)) {
