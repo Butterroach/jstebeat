@@ -60,6 +60,11 @@ setTimeout(
     1
 ); // I CLEARLY DON'T KNOW WHAT I'M DOING
 
+setTimeout(
+    () => (this.displayText = document.getElementById("displayText")),
+    1
+);
+
 setInterval(
     (toggleexoticwarning = () => {
         const bytebeatMode = document.getElementById("mode").value;
@@ -221,6 +226,8 @@ function playBytebeat() {
     ) {
         bytebeatCode = eval(bytebeatCode.replace("eval", ""));
     }
+    jsteDisplayText = "";
+    _last_jsteDisplayText = jsteDisplayText;
     if (bytebeatMode === "func") {
         bytebeat_func = Function(bytebeatCode)();
     } else {
@@ -241,6 +248,9 @@ function playBytebeat() {
                 } else {
                     result = bytebeat_func(t);
                 }
+                if (jsteDisplayText !== _last_jsteDisplayText) {
+                    displayText.innerText = jsteDisplayText;
+                }
             }
             if (Array.isArray(result)) {
                 leftOutputBuffer[i_jstebeat] = handle(
@@ -257,6 +267,7 @@ function playBytebeat() {
                 leftOutputBuffer[i_jstebeat] = handle(bytebeatMode, result, t);
                 rightOutputBuffer[i_jstebeat] = handle(bytebeatMode, result, t);
             }
+            _last_jsteDisplayText = jsteDisplayText;
         }
     };
 
@@ -265,6 +276,8 @@ function playBytebeat() {
 
 function stopBytebeat() {
     try {
+        jsteDisplayText = "";
+        _last_jsteDisplayText = jsteDisplayText;
         audioContext.suspend();
     } catch (e) {
         console.warn("smth went wrong with stopping", e);
