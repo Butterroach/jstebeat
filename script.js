@@ -191,7 +191,10 @@ function handle(bytebeatMode, value, t) {
     } else if (bytebeatMode === "sbb") {
         return ((value + 128) & 255) / 128 - 1;
     } else if (bytebeatMode === "fb" || bytebeatMode === "func") {
-        return value;
+        return Math.min(
+            Math.max(value, -1.0),
+            1.0
+        ); /* damnit firefox why are you like this */
     } else if (bytebeatMode === "4096exotic") {
         return (value & 4095) / 2048 - 1;
     } else if (bytebeatMode === "detailedbeatexotic") {
