@@ -61,7 +61,7 @@
                 width="144"
                 height="144"
             />
-            v3.3.2
+            v3.4.0
         </h1>
         <div id="cont1">
             <label for="bytebeat-code">Bytebeat code:</label>
@@ -120,6 +120,9 @@ t/=4.42,max(min((t*(21&(t>>11)+1)&128|sin(13*cbrt(t*'20233440'[t>>11&7]%4096))*6
             <button id="copyhashbutt" type="button" onclick="copyHash()">
                 Copy hash
             </button>
+            <br />
+            <label for="volume">Volume: </label>
+            <input id="volume" type="range" min="0" max="100" value="100" />
             <br />
             <br />
             <p>

@@ -58,7 +58,22 @@ setTimeout(
               (document.getElementById("background-color").value =
                   localStorage.getItem("backgroundColor"))),
     1
-); // I CLEARLY DON'T KNOW WHAT I'M DOING
+);
+
+setTimeout(
+    () =>
+        localStorage.getItem("volume") === null
+            ? localStorage.setItem("volume", "100")
+            : (document.getElementById("volume").value =
+                  localStorage.getItem("volume")),
+    1
+);
+
+setTimeout(() => {
+    document.getElementById("volume").addEventListener("change", () => {
+        localStorage.setItem("volume", document.getElementById("volume").value);
+    });
+}, 1);
 
 setTimeout(
     () => (this.displayText = document.getElementById("displayText")),
@@ -216,6 +231,7 @@ function playBytebeat() {
     let bytebeatCode = document.getElementById("bytebeat-code").value; // not a constant since it will be modified if its a minibake
     const sampleRate = document.getElementById("sample-rate").value;
     const bytebeatMode = document.getElementById("mode").value;
+    let volumeSlider = document.getElementById("volume");
     audioContext = new window.AudioContext({
         sampleRate: parseInt(sampleRate),
     });
@@ -257,19 +273,19 @@ function playBytebeat() {
                 }
             }
             if (Array.isArray(result)) {
-                leftOutputBuffer[i_jstebeat] = handle(
-                    bytebeatMode,
-                    result[0],
-                    t
-                );
-                rightOutputBuffer[i_jstebeat] = handle(
-                    bytebeatMode,
-                    result[1],
-                    t
-                );
+                leftOutputBuffer[i_jstebeat] =
+                    handle(bytebeatMode, result[0], t) *
+                    (volumeSlider.value / 100);
+                rightOutputBuffer[i_jstebeat] =
+                    handle(bytebeatMode, result[1], t) *
+                    (volumeSlider.value / 100);
             } else {
-                leftOutputBuffer[i_jstebeat] = handle(bytebeatMode, result, t);
-                rightOutputBuffer[i_jstebeat] = handle(bytebeatMode, result, t);
+                leftOutputBuffer[i_jstebeat] =
+                    handle(bytebeatMode, result, t) *
+                    (volumeSlider.value / 100);
+                rightOutputBuffer[i_jstebeat] =
+                    handle(bytebeatMode, result, t) *
+                    (volumeSlider.value / 100);
             }
             _last_jsteDisplayText = jsteDisplayText;
         }
