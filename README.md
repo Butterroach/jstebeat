@@ -1,4 +1,4 @@
-[![JStebeat logo](jstebeat-logo.webp)](https://butterroach.github.io/jstebeat/)
+[<p align="center"><img src="jstebeat-logo.webp" alt="JStebeat logo"></p>](https://butterroach.github.io/jstebeat/)
 
 # [JStebeat](https://butterroach.github.io/jstebeat/)
 
