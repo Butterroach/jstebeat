@@ -229,13 +229,21 @@ function playBytebeat() {
     }
     isPlaying = true;
     let bytebeatCode = document.getElementById("bytebeat-code").value; // not a constant since it will be modified if its a minibake
-    const sampleRate = document.getElementById("sample-rate").value;
+    const sampleRate = parseInt(document.getElementById("sample-rate").value);
     const bytebeatMode = document.getElementById("mode").value;
     let volumeSlider = document.getElementById("volume");
     audioContext = new window.AudioContext({
-        sampleRate: parseInt(sampleRate),
+        sampleRate: sampleRate,
     });
-    const bufferSize = 4096;
+    let bufferSize;
+    if (sampleRate <= 32000) {
+        bufferSize = 256;
+    } else if (sampleRate >= 44100 && sampleRate <= 64000) {
+        bufferSize = 1024;
+    } else {
+        bufferSize = 2048;
+    }
+    let _last_jsteDisplayTime = performance.now();
     t = 1024;
     // make minibakes not so laggy
     if (
@@ -267,7 +275,11 @@ function playBytebeat() {
                 } else {
                     result = bytebeat_func(t);
                 }
-                if (jsteDisplayText !== _last_jsteDisplayText) {
+                if (
+                    jsteDisplayText !== _last_jsteDisplayText &&
+                    performance.now() - _last_jsteDisplayTime >= 16
+                ) {
+                    _last_jsteDisplayTime = performance.now();
                     displayText.innerText =
                         "​ ​ ​ ​" + jsteDisplayText + "​ ​ ​ ​"; // there are hidden characters here btw
                 }
