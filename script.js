@@ -231,6 +231,7 @@ function playBytebeat() {
     let bytebeatCode = document.getElementById("bytebeat-code").value; // not a constant since it will be modified if its a minibake
     const sampleRate = parseInt(document.getElementById("sample-rate").value);
     const bytebeatMode = document.getElementById("mode").value;
+    let tCounter = document.getElementById("t");
     let volumeSlider = document.getElementById("volume");
     audioContext = new window.AudioContext({
         sampleRate: sampleRate,
@@ -269,6 +270,7 @@ function playBytebeat() {
         rightOutputBuffer = outputBuffer.getChannelData(1);
         for (let i_jstebeat = 0; i_jstebeat < bufferSize; i_jstebeat++) {
             t = t_jstebeat++;
+            tCounter.textContent = t;
             with (this) {
                 if (bytebeatMode === "func") {
                     result = bytebeat_func(t / sampleRate, sampleRate);
@@ -280,7 +282,7 @@ function playBytebeat() {
                     performance.now() - _last_jsteDisplayTime >= 16
                 ) {
                     _last_jsteDisplayTime = performance.now();
-                    displayText.innerText =
+                    displayText.textContent =
                         "​ ​ ​ ​" + jsteDisplayText + "​ ​ ​ ​"; // there are hidden characters here btw
                 }
             }
