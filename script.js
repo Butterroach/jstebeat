@@ -4,6 +4,8 @@
 // kthxbye!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 let isPlaying;
+let isPaused;
+let t_jstebeat;
 let AlreadyAppended = false;
 let exoticwarningheader = document.createElement("h1");
 let exoticwarningtext = document.createElement("p");
@@ -79,6 +81,8 @@ setTimeout(
     () => (this.displayText = document.getElementById("displayText")),
     1
 );
+
+setTimeout(() => (this.tCounter = document.getElementById("t")), 1);
 
 setInterval(
     (toggleexoticwarning = () => {
@@ -193,11 +197,13 @@ async function copyHash() {
 
 dontdelete = [];
 
-for (let prop in this) {
-    if (this.hasOwnProperty(prop)) {
-        dontdelete.push(prop); // all variables defined at this point should NOT be deleted
+setTimeout(() => {
+    for (let prop in this) {
+        if (this.hasOwnProperty(prop)) {
+            dontdelete.push(prop); // all variables defined at this point should NOT be deleted
+        }
     }
-}
+}, 2);
 
 function handle(bytebeatMode, value, t) {
     // handles values and corrects them accordingly
@@ -231,7 +237,6 @@ function playBytebeat() {
     let bytebeatCode = document.getElementById("bytebeat-code").value; // not a constant since it will be modified if its a minibake
     const sampleRate = parseInt(document.getElementById("sample-rate").value);
     const bytebeatMode = document.getElementById("mode").value;
-    let tCounter = document.getElementById("t");
     let volumeSlider = document.getElementById("volume");
     audioContext = new window.AudioContext({
         sampleRate: sampleRate,
@@ -263,7 +268,11 @@ function playBytebeat() {
         bytebeat_func(0);
     }
     const scriptNode = audioContext.createScriptProcessor(bufferSize, 0, 2);
-    let t_jstebeat = 0; // different name to not break some stuff
+
+    if (!isPaused) {
+        t_jstebeat = 0; // different name to not break some stuff
+    }
+    isPaused = false;
     scriptNode.onaudioprocess = function (audioProcessingEvent) {
         let outputBuffer = audioProcessingEvent.outputBuffer;
         leftOutputBuffer = outputBuffer.getChannelData(0);
@@ -308,6 +317,16 @@ function playBytebeat() {
     scriptNode.connect(audioContext.destination);
 }
 
+function pauseBytebeat() {
+    try {
+        audioContext.suspend();
+    } catch (e) {
+        console.warn("smth went wrong with pausing", e);
+    }
+    isPaused = true;
+    isPlaying = false;
+}
+
 function stopBytebeat() {
     try {
         jsteDisplayText = "";
@@ -317,6 +336,7 @@ function stopBytebeat() {
         console.warn("smth went wrong with stopping", e);
     }
     isPlaying = false;
+    tCounter.textContent = "0";
     for (let prop in this) {
         if (
             this.hasOwnProperty(prop) &&

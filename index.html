@@ -112,6 +112,7 @@ t/=4.42,max(min((t*(21&(t>>11)+1)&128|sin(13*cbrt(t*'20233440'[t>>11&7]%4096))*6
             </select>
             <br />
             <button type="button" onclick="playBytebeat()">Play</button>
+            <button type="button" onclick="pauseBytebeat()">Pause</button>
             <button type="button" onclick="stopBytebeat()">Stop</button>
             <br />
             <button id="copylinkbutt" type="button" onclick="copyLink()">
@@ -125,7 +126,9 @@ t/=4.42,max(min((t*(21&(t>>11)+1)&128|sin(13*cbrt(t*'20233440'[t>>11&7]%4096))*6
             <input id="volume" type="range" min="0" max="100" value="100" />
             <br />
             <br />
-            <span>t = <span id="t">0</span></span>
+            <div id="tcounter">
+                <span>t = <span id="t">0</span></span>
+            </div>
             <p>
                 Display text (try defining the variable
                 <code>jsteDisplayText</code>!
