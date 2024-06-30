@@ -195,6 +195,9 @@ async function copyHash() {
     }, 3000);
 }
 
+var _last_jsteDisplayText = ""; // NOT defined on play so it'll clear if a new bytebeat is played that doesn't define a display text
+// ^ i am probably stupid because this doesn't work
+
 dontdelete = [];
 
 setTimeout(() => {
@@ -238,6 +241,9 @@ function playBytebeat() {
     const sampleRate = parseInt(document.getElementById("sample-rate").value);
     const bytebeatMode = document.getElementById("mode").value;
     let volumeSlider = document.getElementById("volume");
+    const errortext = document.getElementById("error");
+    const errorcontainer = document.getElementById("errorcontainer");
+    errorcontainer.style = "display:none;";
     audioContext = new window.AudioContext({
         sampleRate: sampleRate,
     });
@@ -260,12 +266,17 @@ function playBytebeat() {
         bytebeatCode = eval(bytebeatCode.replace("eval", ""));
     }
     jsteDisplayText = "";
-    _last_jsteDisplayText = jsteDisplayText;
-    if (bytebeatMode === "func") {
-        bytebeat_func = Function(bytebeatCode)();
-    } else {
-        bytebeat_func = Function("t", `return 0,\n${bytebeatCode || 0};`);
-        bytebeat_func(0);
+    displayText.textContent = "";
+    try {
+        if (bytebeatMode === "func") {
+            bytebeat_func = Function(bytebeatCode)();
+        } else {
+            bytebeat_func = Function("t", `return 0,\n${bytebeatCode || 0};`);
+            bytebeat_func(0);
+        }
+    } catch (e) {
+        errorcontainer.style = "display:block;";
+        errortext.textContent = `t = ${t}, ${e.name}: ${e.message}`;
     }
     const scriptNode = audioContext.createScriptProcessor(bufferSize, 0, 2);
 
@@ -281,16 +292,24 @@ function playBytebeat() {
             t = t_jstebeat++;
             tCounter.textContent = t;
             with (this) {
-                if (bytebeatMode === "func") {
-                    result = bytebeat_func(t / sampleRate, sampleRate);
-                } else {
-                    result = bytebeat_func(t);
+                try {
+                    if (bytebeatMode === "func") {
+                        result = bytebeat_func(t / sampleRate, sampleRate);
+                    } else {
+                        result = bytebeat_func(t);
+                    }
+                    // errorcontainer.style = "display:none;";
+                    // ^ will decide later if i want to readd this
+                } catch (e) {
+                    errorcontainer.style = "display:block;";
+                    errortext.textContent = `t = ${t}, ${e.name}: ${e.message}`;
                 }
                 if (
                     jsteDisplayText !== _last_jsteDisplayText &&
                     performance.now() - _last_jsteDisplayTime >= 16
                 ) {
                     _last_jsteDisplayTime = performance.now();
+                    _last_jsteDisplayText = jsteDisplayText;
                     displayText.textContent =
                         "​ ​ ​ ​" + jsteDisplayText + "​ ​ ​ ​"; // there are hidden characters here btw
                 }
@@ -318,6 +337,9 @@ function playBytebeat() {
 }
 
 function pauseBytebeat() {
+    if (!isPlaying && !isPaused) {
+        return; // a
+    }
     try {
         audioContext.suspend();
     } catch (e) {
@@ -330,7 +352,6 @@ function pauseBytebeat() {
 function stopBytebeat() {
     try {
         jsteDisplayText = "";
-        _last_jsteDisplayText = jsteDisplayText;
         audioContext.suspend();
     } catch (e) {
         console.warn("smth went wrong with stopping", e);
