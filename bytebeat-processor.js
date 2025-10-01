@@ -148,9 +148,7 @@ class BytebeatProcessor extends AudioWorkletProcessor {
                     result = this.bytebeatFunc(tVal);
                 }
             } catch (e) {
-                // send error to main to draw red line and show error
                 this.port.postMessage({type: "error", t: tVal, message: `${e.name}: ${e.message}`, id: this.id});
-                // repeat last sample (like your old code)
                 left[i] = this.lastLeft;
                 right[i] = this.lastRight;
                 continue;
@@ -165,7 +163,6 @@ class BytebeatProcessor extends AudioWorkletProcessor {
                 right[i] = h;
             }
 
-            // send visual sample to main thread
             this.port.postMessage({
                 type: "visual",
                 left: left[i],
