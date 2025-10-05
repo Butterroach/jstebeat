@@ -2,6 +2,7 @@
 /* global AudioWorkletProcessor, registerProcessor */
 
 class BytebeatProcessor extends AudioWorkletProcessor {
+    // noinspection JSUnusedGlobalSymbols
     static get parameterDescriptors() {
         return [];
     }
@@ -16,7 +17,7 @@ class BytebeatProcessor extends AudioWorkletProcessor {
             for (let item of mathItems) globalThis[item] = Math[item];
         })();
 
-        this.sampleRate = (options.processorOptions && options.processorOptions.sampleRate) || sampleRate || 44100;
+        this.sampleRate = (options.processorOptions && options.processorOptions.sampleRate) || 44100;
         this.bytebeatCode = (options.processorOptions && options.processorOptions.bytebeatCode) || "0";
         this.bytebeatMode = (options.processorOptions && options.processorOptions.bytebeatMode) || "bb";
 
@@ -112,17 +113,24 @@ class BytebeatProcessor extends AudioWorkletProcessor {
                 this.bytebeatFunc = Function(this.bytebeatCode)();
             } else {
                 this.bytebeatFunc = Function("t", `return 0,${this.bytebeatCode || 0};`);
-                if (this.t === 0) {
-                    this.bytebeatFunc(0);
-                }
             }
         } catch (e) {
             this.port.postMessage({type: "compileError", message: `${e.name}: ${e.message}`, id: this.id});
-            this.bytebeatFunc = () => 0;
+            this.bytebeatFunc = () => NaN;
+        }
+        try {
+            if (this.t === 0) {
+                this.bytebeatFunc(0);
+            }
+        } catch (e) {
+            this.port.postMessage({type: "error", t: this.t, message: `${e.name}: ${e.message}`, id: this.id});
         }
     }
 
     handle(value) {
+        if (isNaN(value)) {
+            return value;
+        }
         if (this.bytebeatMode === "bb") return (value & 255) / 128 - 1;
         if (this.bytebeatMode === "sbb") return ((value + 128) & 255) / 128 - 1;
         if (this.bytebeatMode === "fb" || this.bytebeatMode === "func") return Math.min(Math.max(value, -1.0), 1.0);
@@ -171,11 +179,18 @@ class BytebeatProcessor extends AudioWorkletProcessor {
                 id: this.id,
             });
 
-            left[i] *= this.volume;
-            right[i] *= this.volume;
-
-            this.lastLeft = left[i];
-            this.lastRight = right[i];
+            if (isNaN(left[i])) {
+                left[i] = this.lastLeft;
+            } else {
+                left[i] *= this.volume;
+                this.lastLeft = left[i];
+            }
+            if (isNaN(right[i])) {
+                right[i] = this.lastRight;
+            } else {
+                right[i] *= this.volume;
+                this.lastRight = right[i];
+            }
 
             const currentDisplay = (typeof globalThis.jsteDisplayText !== "undefined") ? String(globalThis.jsteDisplayText) : "";
             if (currentDisplay !== this.lastDisplayValue && (tVal - this.lastDisplayT) >= this.displayThrottleSamples) {
