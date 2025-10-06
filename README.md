@@ -16,8 +16,6 @@ No. **Don't even open an issue about that**. The `library` issue tag is for mist
 
 1. Clone the repo (no instructions for this. if you don't know how to Google this, **please don't fork**)
 2. `npm install`
-3. Create a directory called `cert` and put self-signed SSL certificates in it. This is just for local testing.
-   You can ask some AI or Google how to do this idk how to explain it
 
 Any changes relating to CSS (i.e. styling) are in `src/index.css` (CSS).
 Any changes relating to the website structure itself are in `index.html` (HTML).
@@ -41,7 +39,8 @@ not.
 #### "...why does that matter"
 
 Browsers are stupid and decided `AudioWorklet`s are high security and should only be on "secure contexts" (aka. HTTPS
-and `localhost`). In fact that's exactly why you need self-signed certs when locally testing
+and `localhost`). In fact that's exactly why you need self-signed certs when locally testing (don't worry, the repo
+provides a self signed SSL cert for you. It expires in 44 years so I don't think you need to worry about that)
 
 #### "How do I fix it"
 
