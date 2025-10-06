@@ -28,8 +28,8 @@ Report that shit to Chrome. Not me. I did nothing. And fuck off.
 
 Contact me:
 
-- Email: butterroach <at> outlook <dot> com (fastest)
-    - butterroach <at> proton <dot> me (way slower response times, prefer outlook please)
-- Reddit: u <slash> butterroach (slower than main email, faster than alt email)
+- Email: butterroach \<at\> outlook \<dot\> com (fastest)
+    - butterroach \<at\> proton \<dot\> me (way slower response times, prefer outlook please)
+- Reddit: u \<slash\> butterroach (slower than main email, faster than alt email)
 
 I have **NO OTHER** active forms of communication. And if you just lied, fuck off.
