@@ -23,7 +23,7 @@ try {
 let bytebeatNode: AudioWorkletNode | null = null;
 let dontDelete: string[] = [];
 let alreadyAppended = false;
-let tCounter: HTMLSpanElement;
+let tCounter: HTMLSpanElement = document.getElementById("t")!;
 let exoticWarningHeader = document.createElement("h2");
 let exoticWarningText = document.createElement("p");
 let nonExoticButton = document.createElement("button");
