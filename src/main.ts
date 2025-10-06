@@ -5,22 +5,6 @@ import {catppuccinMocha} from "@catppuccin/codemirror";
 
 document.getElementById("version")!.textContent = __APP_VERSION__;
 
-const state = EditorState.create({
-    doc: "(t&1024||t&16384&&t&2048&&!(t&512))?(t&4096&&!(t&2048)?(t*t*t>>~t*t)+127:t*((t>>11&1)+1)*(1+(t>>16&1)*3))*2:0",
-    extensions: [basicSetup, javascript(), catppuccinMocha, EditorView.updateListener.of((update) => {
-        if (update.docChanged) {
-            window.location.hash = calcHash();
-        }
-    })]
-});
-
-const view = new EditorView({
-    state,
-    parent: document.getElementById("editor")!
-});
-
-view.dom.style.height = "100%";
-
 let audioContext: AudioContext | null;
 const canvas = document.getElementById('visual') as HTMLCanvasElement;
 const ctx = canvas.getContext("2d")!;
@@ -30,6 +14,12 @@ let snapshot: unknown = null;
 let isPlaying = false;
 let isPaused = false;
 let tJstebeat = 0; // different name to not break some stuff
+let err: null | Error = null;
+try {
+    await import('./forkers.ts'); // naaaasty...
+} catch (e) {
+    err = e as Error;
+}
 let bytebeatNode: AudioWorkletNode | null = null;
 let dontDelete: string[] = [];
 let alreadyAppended = false;
@@ -143,7 +133,28 @@ function updateBackground() {
     const color = document.getElementById("background-color").value;
     document.body.style.backgroundColor = color;
     localStorage.setItem("backgroundColor", color);
+    if (err) {
+        throw new Error(err!.message);
+    }
 }
+
+updateBackground()
+
+const state = EditorState.create({
+    doc: "(t&1024||t&16384&&t&2048&&!(t&512))?(t&4096&&!(t&2048)?(t*t*t>>~t*t)+127:t*((t>>11&1)+1)*(1+(t>>16&1)*3))*2:0",
+    extensions: [basicSetup, javascript(), catppuccinMocha, EditorView.updateListener.of((update) => {
+        if (update.docChanged) {
+            window.location.hash = calcHash();
+        }
+    })]
+});
+
+const view = new EditorView({
+    state,
+    parent: document.getElementById("editor")!
+});
+
+view.dom.style.height = "100%";
 
 // @ts-ignore
 function resetBackground() {

@@ -203,6 +203,19 @@ input[type=color] {
     margin: 0 auto;
 }
 
+@media(max-width: 900px) {
+    #buttons-container {
+        width: 100%;
+    }
+}
+
+@media(max-width: 240px) {
+    #buttons-container {
+        display: flex;
+        flex-direction: column;
+    }
+}
+
 #play, #pause, #stop {
     grid-row: 1;
 }
@@ -248,9 +261,55 @@ input[type=color] {
 }
 
 
-@media(max-width: 1024px) {
+@media (max-width: 1024px) and (min-width: 513px), (min-height: 384px) and (max-height: 550px) {
     #visual {
         width: 512px;
         height: 256px;
     }
+}
+
+@media (max-width: 512px) and (min-width: 400px), (max-height: 383px) {
+    #visual {
+        width: 384px;
+        height: 192px;
+    }
+}
+
+@media (max-width: 399px) and (min-width: 268px) {
+    #visual {
+        width: 256px;
+        height: 128px;
+    }
+}
+
+@media (max-width: 267px) {
+    /* how */
+    #visual {
+        width: 192px;
+        height: 96px;
+    }
+}
+
+input[type=range] {
+    -webkit-appearance: none; /* firefox honors this lmfao */
+    border: none;
+    background: transparent;
+}
+
+input[type="range"]::-webkit-slider-thumb, input[type="range"]::-moz-range-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    background: #fff;
+    border-radius: 50%;
+    margin-top: -6px;
+    cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-thumb::before, input[type="range"]::-moz-range-thumb::before {
+    background-color: red;
+}
+
+input[type="range"]::-webkit-slider-runnable-track, input[type="range"]::-moz-range-track {
+    background-color: #0000007f;
 }
