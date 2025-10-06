@@ -86,9 +86,13 @@ setTimeout(
     1
 );
 
-document.getElementById("volume")!.addEventListener("change", () => {
-    localStorage.setItem("volume", document.getElementById("volume")!.value);
-});
+setTimeout(() => {
+    // @ts-ignore
+    document.getElementById("volume").addEventListener("change", () => {
+        // @ts-ignore
+        localStorage.setItem("volume", document.getElementById("volume").value);
+    });
+}, 1);
 
 setInterval(
     () => {
