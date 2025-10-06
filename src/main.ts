@@ -127,18 +127,20 @@ setInterval(
     100
 ); // surprisingly this doesn't lag on chrome
 
-// @ts-ignore
 function updateBackground() {
     // @ts-ignore
     const color = document.getElementById("background-color").value;
     document.body.style.backgroundColor = color;
     localStorage.setItem("backgroundColor", color);
+}
+
+function updateBackgroundHelper() {
     if (err) {
         throw new Error(err!.message);
     }
 }
 
-updateBackground()
+updateBackgroundHelper();
 
 const state = EditorState.create({
     doc: "(t&1024||t&16384&&t&2048&&!(t&512))?(t&4096&&!(t&2048)?(t*t*t>>~t*t)+127:t*((t>>11&1)+1)*(1+(t>>16&1)*3))*2:0",
