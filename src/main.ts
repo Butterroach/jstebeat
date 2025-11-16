@@ -2,7 +2,7 @@ import {EditorState, Compartment} from "@codemirror/state";
 import {EditorView, basicSetup} from "codemirror";
 import {javascript} from "@codemirror/lang-javascript";
 import {catppuccinLatte, catppuccinFrappe, catppuccinMacchiato, catppuccinMocha} from "@catppuccin/codemirror";
-import processorUrl from './bytebeat-processor.ts?url';
+import workletUrl from './worklets/bytebeat-processor.ts?worker&url';
 import {flavors} from '@catppuccin/palette';
 
 const versionElement = document.getElementById("version") as HTMLSpanElement;
@@ -439,7 +439,7 @@ async function playBytebeat() {
     if (!audioContext) audioContext = new AudioContext({sampleRate: parseInt(sampleRate.value)});
 
     try {
-        await audioContext.audioWorklet.addModule(processorUrl);
+        await audioContext.audioWorklet.addModule(workletUrl);
     } catch (err) {
     }
 
