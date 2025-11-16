@@ -27,7 +27,7 @@ compatible with Catppuccin objects.
 Any changes relating to the website structure itself are in `index.html` (HTML).
 
 Any changes relating to the bytebeat processor (audio handling, running the bytebeat, etc., excluding visualizer
-handling, including handling code state) are in `src/bytebeat-processor.ts` (TypeScript).
+handling, including handling code state) are in `src/worklets/bytebeat-processor.ts` (TypeScript).
 
 Any changes relating to any other code are in `src/index.ts` (TypeScript).
 
