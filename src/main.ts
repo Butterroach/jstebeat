@@ -1,13 +1,21 @@
-import {EditorState} from "@codemirror/state";
+import {EditorState, Compartment} from "@codemirror/state";
 import {EditorView, basicSetup} from "codemirror";
 import {javascript} from "@codemirror/lang-javascript";
-import {catppuccinMocha} from "@catppuccin/codemirror";
+import {catppuccinLatte, catppuccinFrappe, catppuccinMacchiato, catppuccinMocha} from "@catppuccin/codemirror";
+import processorUrl from './bytebeat-processor.ts?url';
+import {flavors} from '@catppuccin/palette';
 
-document.getElementById("version")!.textContent = __APP_VERSION__;
+const versionElement = document.getElementById("version") as HTMLSpanElement;
+versionElement.textContent = __APP_VERSION__;
 
 let audioContext: AudioContext | null;
 const canvas = document.getElementById('visual') as HTMLCanvasElement;
 const ctx = canvas.getContext("2d")!;
+const volume = document.getElementById("volume") as HTMLInputElement;
+const bytebeatMode = document.getElementById("mode") as HTMLSelectElement;
+const sampleRate = document.getElementById("sample-rate") as HTMLInputElement;
+const customizationSettingsHeader = document.getElementById("customization-settings-header")!;
+const themeSelection = document.getElementById("theme") as HTMLSelectElement;
 let inside = false;
 let currentNodeId: number;
 let snapshot: unknown = null;
@@ -31,20 +39,18 @@ exoticWarningHeader.innerText = "EXOTIC WARNING!";
 exoticWarningText.innerText =
     "You're using an exotic mode. This probably won't work in other players (that don't have this mode). You can click the button below to copy a non-exotic version into your clipboard.";
 nonExoticButton.type = "button"; // why do i have to specify that a button is a button?
-nonExoticButton.innerText = "Copy non-exotic version into clipboard ✨ (result should be played as floatbeat, THIS WILL NOT WORK WITH STEREO STUFF)";
+nonExoticButton.innerText = "Copy non-exotic version into clipboard (result should be played as floatbeat, THIS WILL NOT WORK WITH STEREO STUFF)";
 let nonExoticOriginalText = nonExoticButton.innerText;
 nonExoticButton.onclick = async function () {
-    // @ts-ignore
-    let bytebeatMode = document.getElementById("mode").value;
     if (
-        bytebeatMode === "4096exotic"
+        bytebeatMode.value === "4096exotic"
     ) {
         await navigator.clipboard.writeText(
             "((" +
             view.state.doc.toString() +
             ")&4095)/2048-1"
         );
-    } else if (bytebeatMode === "detailedbeatexotic") {
+    } else if (bytebeatMode.value === "detailedbeatexotic") {
         await navigator.clipboard.writeText(
             "val=(" +
             view.state.doc.toString() +
@@ -56,82 +62,113 @@ nonExoticButton.onclick = async function () {
         );
         return;
     }
-    nonExoticButton.textContent = "Copied! ✨";
+    nonExoticButton.textContent = "Copied!";
     setTimeout(function () {
         nonExoticButton.textContent = nonExoticOriginalText;
     }, 3000);
 };
 
-// noinspection CommaExpressionJS
-setTimeout(
-    () =>
-        localStorage.getItem("backgroundColor") === null
-            ? localStorage.setItem("backgroundColor", "#1e1e1e")
-            // @ts-ignore
-            : ((document.body.style.backgroundColor =
-                localStorage.getItem("backgroundColor")),
-                // @ts-ignore
-                (document.getElementById("background-color").value =
-                    localStorage.getItem("backgroundColor"))),
-    1
-);
+let clickTimes: number[] = [];
 
-setTimeout(
-    () =>
-        localStorage.getItem("volume") === null
-            ? localStorage.setItem("volume", "100")
-            // @ts-ignore
-            : (document.getElementById("volume").value =
-                localStorage.getItem("volume")),
-    1
-);
+function devModeHandle() {
+    if (localStorage.getItem("devMode") === "true") {
+        document.documentElement.dataset.devMode = "true";
+        versionElement.innerText = __APP_VERSION__ + " (dev mode)";
+    } else {
+        document.documentElement.dataset.devMode = "false";
+        versionElement.innerText = __APP_VERSION__;
+    }
+}
 
-setTimeout(() => {
-    // @ts-ignore
-    document.getElementById("volume").addEventListener("change", () => {
-        // @ts-ignore
-        localStorage.setItem("volume", document.getElementById("volume").value);
+devModeHandle();
+
+versionElement.addEventListener("click", () => {
+    const now = Date.now();
+    clickTimes.push(now);
+
+    if (clickTimes.length > 5) clickTimes.shift();
+
+    if (clickTimes.length === 5 && (now - clickTimes[0]) < 1500) {
+        localStorage.setItem("devMode", String(localStorage.getItem("devMode") !== "true"));
+        clickTimes = [];
+        devModeHandle();
+    }
+});
+
+let theme = localStorage.getItem("theme");
+
+let activeTheme = flavors.mocha;
+
+if (
+    theme === null
+    || !Array.from(themeSelection.options).map(option => option.value).includes(theme)
+) {
+    if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+        localStorage.setItem("theme", "mocha");
+    } else {
+        localStorage.setItem("theme", "latte");
+    }
+}
+
+function updateTheme() {
+    localStorage.setItem("theme", themeSelection.value!);
+    document.documentElement.dataset.theme = themeSelection.value!;
+    view.dispatch({
+        effects: themeComp.reconfigure(
+            {
+                latte: catppuccinLatte,
+                frappe: catppuccinFrappe,
+                macchiato: catppuccinMacchiato,
+                mocha: catppuccinMocha,
+                legacy: catppuccinMocha
+            }[themeSelection.value]!
+        ),
     });
-}, 1);
+    activeTheme = {
+        latte: flavors.frappe, // :P latte is really terrible as a visualizer theme so this is just a compromise
+        frappe: flavors.frappe,
+        macchiato: flavors.macchiato,
+        mocha: flavors.mocha,
+        legacy: flavors.mocha  // :P
+    }[themeSelection.value]!;
+}
 
-setInterval(
-    () => {
-        // @ts-ignore
-        const bytebeatMode = document.getElementById("mode").value;
-        if (bytebeatMode.endsWith("exotic")) {
-            if (!alreadyAppended) {
-                alreadyAppended = true;
-                document.body.appendChild(exoticWarningHeader);
-                document.body.appendChild(exoticWarningText);
-                document.body.appendChild(nonExoticButton);
-                // @ts-ignore
-                document
-                    .getElementById("customization-settings-header")
-                    .before(exoticWarningHeader);
-                // @ts-ignore
-                document
-                    .getElementById("customization-settings-header")
-                    .before(exoticWarningText);
-                // @ts-ignore
-                document
-                    .getElementById("customization-settings-header")
-                    .before(nonExoticButton);
-            }
-        } else {
-            alreadyAppended = false;
-            exoticWarningHeader.remove();
-            exoticWarningText.remove();
-            nonExoticButton.remove();
+themeSelection.value = localStorage.getItem("theme")!;
+
+themeSelection.addEventListener("change", updateTheme);
+
+if (localStorage.getItem("volume") === null) {
+    localStorage.setItem("volume", "100")
+} else {
+    volume.value = localStorage.getItem("volume")!;
+}
+
+volume.addEventListener("change", () => {
+    localStorage.setItem("volume", volume.value);
+});
+
+sampleRate.addEventListener("change", () => {
+    window.location.hash = calcHash();
+})
+
+bytebeatMode.onchange = () => {
+    window.location.hash = calcHash();
+    if (bytebeatMode.value.endsWith("exotic")) {
+        if (!alreadyAppended) {
+            alreadyAppended = true;
+            document.body.appendChild(exoticWarningHeader);
+            document.body.appendChild(exoticWarningText);
+            document.body.appendChild(nonExoticButton);
+            customizationSettingsHeader.before(exoticWarningHeader);
+            customizationSettingsHeader.before(exoticWarningText);
+            customizationSettingsHeader.before(nonExoticButton);
         }
-    },
-    100
-); // surprisingly this doesn't lag on chrome
-
-function updateBackground() {
-    // @ts-ignore
-    const color = document.getElementById("background-color").value;
-    document.body.style.backgroundColor = color;
-    localStorage.setItem("backgroundColor", color);
+    } else {
+        alreadyAppended = false;
+        exoticWarningHeader.remove();
+        exoticWarningText.remove();
+        nonExoticButton.remove();
+    }
 }
 
 function updateBackgroundHelper() {
@@ -142,13 +179,19 @@ function updateBackgroundHelper() {
 
 updateBackgroundHelper();
 
+const themeComp = new Compartment();
+
 const state = EditorState.create({
-    doc: "(t&1024||t&16384&&t&2048&&!(t&512))?(t&4096&&!(t&2048)?(t*t*t>>~t*t)+127:t*((t>>11&1)+1)*(1+(t>>16&1)*3))*2:0",
-    extensions: [basicSetup, javascript(), catppuccinMocha, EditorView.updateListener.of((update) => {
-        if (update.docChanged) {
-            window.location.hash = calcHash();
-        }
-    })]
+    doc: splitHash()[0],
+    extensions: [
+        basicSetup,
+        javascript(),
+        themeComp.of(catppuccinLatte),
+        EditorView.updateListener.of((update) => {
+            if (update.docChanged) {
+                window.location.hash = calcHash();
+            }
+        })]
 });
 
 const view = new EditorView({
@@ -158,20 +201,52 @@ const view = new EditorView({
 
 view.dom.style.height = "100%";
 
-// @ts-ignore
-function resetBackground() {
-    const color = "#1e1e1e";
-    // @ts-ignore
-    document.getElementById("background-color").value = color;
-    document.body.style.backgroundColor = color;
-    localStorage.setItem("backgroundColor", color);
+updateTheme();
+bytebeatMode.onchange(new Event("change"));
+
+function splitHash(hash: string = window.location.hash): string[] {
+    if (hash) {
+        let hashParts;
+        if (hash.startsWith("#v6$")) {
+            hashParts = hash.substring(4).split(".");
+            hashParts = [hashParts[0], ...hashParts[1].split("~")];
+        } else {
+            console.log(hash)
+            hashParts = hash.substring(1).split("@");
+            hashParts = [hashParts[0], ...hashParts[1].split("]")];
+        }
+        console.log(hashParts);
+        hashParts[0] = new TextDecoder().decode(base64ToBytes(hashParts[0]));
+        return hashParts;
+    }
+    return [
+        "(t&1024||t&16384&&t&2048&&!(t&512))?(t&4096&&!(t&2048)?(t*t*t>>~t*t)+127:t*((t>>11&1)+1)*(1+(t>>16&1)*3))*2:0",
+        "8000",
+        "bb"
+    ];
 }
+
+// @ts-ignore
+(globalThis.hash_change = (hash = window.location.hash) => {
+    if (hash) {
+        let hashParts = splitHash(hash);
+        view.dispatch({
+            changes: {
+                from: 0,
+                to: view.state.doc.length,
+                insert: hashParts[0],
+            }
+        });
+        sampleRate.value = hashParts[1];
+        bytebeatMode.value = hashParts[2];
+    }
+})();
+
+setInterval(() => window.location.hash = calcHash(), 100);
 
 function base64ToBytes(base64: string) {
     const binString = atob(base64);
-    // @ts-ignore
-    // noinspection JSCheckFunctionSignatures (false positive!)
-    return Uint8Array.from(binString, (m) => m.codePointAt(0));
+    return Uint8Array.from(binString, (m) => m.codePointAt(0)!);
 }
 
 function bytesToBase64(bytes: Iterable<number> | ArrayLike<number>) {
@@ -183,65 +258,29 @@ function bytesToBase64(bytes: Iterable<number> | ArrayLike<number>) {
 
 // the 2 above functions are stolen from MDN docs thank you very much
 
-setTimeout(
-    // @ts-ignore
-    (globalThis.hash_change = (hash = window.location.hash) => {
-        if (hash) {
-            let hashParts = hash.substring(1).split("@");
-            hashParts[2] = hash.substring(1).split("]")[1];
-            view.dispatch({
-                changes: {
-                    from: 0,
-                    to: view.state.doc.length,
-                    insert: new TextDecoder().decode(base64ToBytes(hashParts[0]))
-                }
-            });
-            // @ts-ignore
-            document.getElementById("sample-rate").value = parseInt(
-                hashParts[1]
-            );
-            // @ts-ignore
-            document.getElementById("mode").value = hashParts[2];
-        }
-    }),
-    1
-);
-
 async function copyLink() {
     let copyLinkButton: HTMLElement = document.getElementById("copylinkbutt")!;
     await navigator.clipboard.writeText(
-        "https://butterroach.github.io/jstebeat/#" +
-        bytesToBase64(
-            new TextEncoder().encode(
-                view.state.doc.toString()
-            )
-        ) +
-        "@" +
-        // @ts-ignore
-        document.getElementById("sample-rate").value +
-        "]" +
-        // @ts-ignore
-        document.getElementById("mode").value
+        window.location.origin + window.location.pathname + calcHash()
     );
-    copyLinkButton.textContent = "Copied!";
+    let originalHTML = copyLinkButton.innerHTML;
+    copyLinkButton.innerHTML = "Copied!";
     setTimeout(function () {
-        copyLinkButton.textContent = "Copy link";
+        copyLinkButton.innerHTML = originalHTML;
     }, 3000);
 }
 
 function calcHash() {
-    return "#" +
+    return "#v6$" +
         bytesToBase64(
             new TextEncoder().encode(
                 view.state.doc.toString()
             )
         ) +
-        "@" +
-        // @ts-ignore
-        document.getElementById("sample-rate").value +
-        "]" +
-        // @ts-ignore
-        document.getElementById("mode").value
+        "." +
+        sampleRate.value +
+        "~" +
+        bytebeatMode.value
 }
 
 async function copyHash() {
@@ -249,55 +288,24 @@ async function copyHash() {
     await navigator.clipboard.writeText(
         calcHash()
     );
-    copyHashButton.textContent = "Copied!";
+    let originalHTML = copyHashButton.innerHTML;
+    copyHashButton.innerHTML = "Copied!";
     setTimeout(function () {
-        copyHashButton.textContent = "Copy hash";
+        copyHashButton.innerHTML = originalHTML;
     }, 3000);
 }
 
-async function initBytebeat() {
-    tCounter = document.getElementById("t") as HTMLSpanElement;
-    const audioContext = new AudioContext({sampleRate: 44100});
-    await audioContext.audioWorklet.addModule('bytebeat-processor.js');
-
-    const workletNode = new AudioWorkletNode(audioContext, 'bytebeat-processor', {
-        numberOfOutputs: 1,
-        outputChannelCount: [2],
-        parameterData: {volume: 1}
-    });
-
-    ctx.fillStyle = 'black';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    const bytebeatCode = view.state.doc.toString();
-    // @ts-ignore
-    const bytebeatMode = document.getElementById('mode').value;
-
-    workletNode.port.postMessage({type: 'updateCode', code: bytebeatCode});
-    workletNode.port.postMessage({type: 'updateMode', mode: bytebeatMode});
-
-    workletNode.port.onmessage = (e) => {
-        if (e.data.type === 'visual') {
-            const x = e.data.t % canvas.width;
-            const y = ((-e.data.value + 1) * 127) & 255;
-            ctx.fillStyle = 'white';
-            ctx.fillRect(x, y, 1, 1);
-        }
-    };
-
-    const volumeSlider = document.getElementById('volume') as HTMLInputElement;
-    volumeSlider.addEventListener('input', () => {
-        // @ts-ignore
-        workletNode.parameters.get('volume').setValueAtTime(
-            Number(volumeSlider.value) / 100,
-            audioContext.currentTime
-        );
-    });
-
-    workletNode.connect(audioContext.destination);
+async function copyCode() {
+    let copyCodeButton: HTMLElement = document.getElementById("copycodebutt")!;
+    await navigator.clipboard.writeText(
+        view.state.doc.toString()
+    );
+    let originalHTML = copyCodeButton.innerHTML;
+    copyCodeButton.innerHTML = "Copied!";
+    setTimeout(function () {
+        copyCodeButton.innerHTML = originalHTML;
+    }, 3000);
 }
-
-document.addEventListener('DOMContentLoaded', initBytebeat);
 
 (function createMathAliases() {
     const mathItems = Object.getOwnPropertyNames(Math);
@@ -331,10 +339,10 @@ function unwrapMinibake(bytebeatCode: string) {
 
 function handleWorkletError(t: number, errorMessage: string) {
     const x = t % canvas.width;
-    ctx.fillStyle = "red";
+    ctx.fillStyle = activeTheme.colors.red.hex;
     ctx.fillRect(x, 0, 1, canvas.height);
 
-    const errorContainer = document.getElementById("errorcontainer");
+    const errorContainer = document.getElementById("error-container");
     const errorText = document.getElementById("error");
     tJstebeat = t;
     if (errorContainer) {
@@ -359,7 +367,7 @@ function handleWorkletMessage(e: {
             tCounter.textContent = String(tJstebeat);
         }
         const x = d.t % canvas.width;
-        ctx.fillStyle = "black";
+        ctx.fillStyle = activeTheme.colors.crust.hex;
         ctx.fillRect(x, 0, 1, canvas.height);
 
         const leftY = (((-d.left) + 1) * 127) & 255;
@@ -367,25 +375,25 @@ function handleWorkletMessage(e: {
 
         if (leftY === rightY) {
             if (isNaN(d.left)) {
-                ctx.fillStyle = "red";
+                ctx.fillStyle = activeTheme.colors.red.hex;
                 ctx.fillRect(x, 0, 1, canvas.height);
             } else {
-                ctx.fillStyle = "white";
+                ctx.fillStyle = activeTheme.colors.text.hex;
                 ctx.fillRect(x, leftY, 1, 1);
             }
         } else {
             if (isNaN(d.left)) {
-                ctx.fillStyle = "red";
+                ctx.fillStyle = activeTheme.colors.red.hex;
                 ctx.fillRect(x, 0, 1, canvas.height);
             } else {
-                ctx.fillStyle = "#ff6f00";
+                ctx.fillStyle = activeTheme.colors.peach.hex;
                 ctx.fillRect(x, leftY, 1, 1);
             }
             if (isNaN(d.right)) {
-                ctx.fillStyle = "red";
+                ctx.fillStyle = activeTheme.colors.red.hex;
                 ctx.fillRect(x, 0, 1, canvas.height);
             } else {
-                ctx.fillStyle = "#0090ff";
+                ctx.fillStyle = activeTheme.colors.blue.hex;
                 ctx.fillRect(x, rightY, 1, 1);
             }
         }
@@ -397,7 +405,7 @@ function handleWorkletMessage(e: {
     } else if (d.type === "error") {
         handleWorkletError(d.t, d.message);
     } else if (d.type === "compileError") {
-        const errorContainer = document.getElementById("errorcontainer") as HTMLDivElement;
+        const errorContainer = document.getElementById("error-container") as HTMLDivElement;
         const errorText = document.getElementById("error") as HTMLSpanElement;
         // noinspection JSValidateTypes
         errorContainer.style = "display: block;";
@@ -417,32 +425,30 @@ async function playBytebeat() {
     document.getElementById("stop")!.dataset.on = "false";
 
     if (!isPaused) {
-        const errorContainer = document.getElementById("errorcontainer") as HTMLDivElement;
+        const errorContainer = document.getElementById("error-container") as HTMLDivElement;
         errorContainer.style = "display: none;";
         document.getElementById("displayText")!.textContent = "";
     }
 
     console.log(!bytebeatNode, !audioContext);
 
-    const sampleRate = parseInt((document.getElementById("sample-rate") as HTMLInputElement).value);
     let bytebeatCode = view.state.doc.toString();
-    const mode = (document.getElementById("mode") as HTMLInputElement).value;
 
     bytebeatCode = unwrapMinibake(bytebeatCode);
 
-    if (!audioContext) audioContext = new AudioContext({sampleRate: sampleRate});
+    if (!audioContext) audioContext = new AudioContext({sampleRate: parseInt(sampleRate.value)});
 
     try {
-        await audioContext.audioWorklet.addModule("bytebeat-processor.js");
+        await audioContext.audioWorklet.addModule(processorUrl);
     } catch (err) {
     }
 
     bytebeatNode = new AudioWorkletNode(audioContext, "bytebeat-processor", {
         outputChannelCount: [2],
         processorOptions: {
-            sampleRate,
+            sampleRate: audioContext.sampleRate,
             bytebeatCode,
-            bytebeatMode: mode,
+            bytebeatMode: bytebeatMode.value,
             bufferSize: 2048
         }
     });
@@ -548,7 +554,7 @@ async function stopBytebeat() {
 
     await destroyBytebeat();
 
-    ctx.fillStyle = "black";
+    ctx.fillStyle = activeTheme.colors.crust.hex;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
 
@@ -576,18 +582,15 @@ async function stopBytebeat() {
     }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-    ctx.fillStyle = "black";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-});
+ctx.fillStyle = activeTheme.colors.crust.hex;
+ctx.fillRect(0, 0, canvas.width, canvas.height);
 
 document.getElementById("play")!.addEventListener("click", playBytebeat)
 document.getElementById("pause")!.addEventListener("click", pauseBytebeat)
 document.getElementById("stop")!.addEventListener("click", stopBytebeat)
+document.getElementById("copycodebutt")!.addEventListener("click", copyCode)
 document.getElementById("copyhashbutt")!.addEventListener("click", copyHash)
 document.getElementById("copylinkbutt")!.addEventListener("click", copyLink)
-document.getElementById("background-color")!.addEventListener("change", updateBackground)
-document.getElementById("reset-bg")!.addEventListener("click", resetBackground)
 
 function onPointerMove(e: { clientX: number; clientY: number; }) {
     const r = canvas.getBoundingClientRect();
@@ -604,3 +607,6 @@ window.addEventListener('blur', () => {
     inside = false;
     canvas.classList.remove('hover');
 });
+
+ctx.fillStyle = activeTheme.colors.crust.hex;
+ctx.fillRect(0, 0, canvas.width, canvas.height);

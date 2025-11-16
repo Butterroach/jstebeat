@@ -1,33 +1,34 @@
-/** @typedef {import('standard-browser-lib')} */
-/* global AudioWorkletProcessor, registerProcessor */
-
 class BytebeatProcessor extends AudioWorkletProcessor {
-    // noinspection JSUnusedGlobalSymbols
-    static get parameterDescriptors() {
-        return [];
-    }
+    private id: number | null = null;
+    private sampleRate: number;
+    private bytebeatCode: string;
+    private bytebeatMode: string;
+    private t: number = 0;
+    private lastDisplayT: number = 0;
+    private lastDisplayValue: string = "";
+    private displayThrottleSamples: number;
+    private volume: number = 1.0;
+    private lastLeft: number = 0;
+    private lastRight: number = 0;
+    private initialKeys: Set<string> | null = null;
+    private bytebeatFunc: Function | null = null;
 
-    constructor(options) {
+    constructor(options: { processorOptions: { sampleRate: number; bytebeatCode: string; bytebeatMode: string; }; }) {
         super();
-
-        this.id = null;
 
         (function createMathAliasesInWorklet() {
             const mathItems = Object.getOwnPropertyNames(Math);
-            for (let item of mathItems) globalThis[item] = Math[item];
+            for (let item of mathItems) { // @ts-ignore
+                globalThis[item] = Math[item];
+            }
+            // @ts-ignore
+            globalThis.int = Math.floor;
         })();
 
         this.sampleRate = (options.processorOptions && options.processorOptions.sampleRate) || 44100;
         this.bytebeatCode = (options.processorOptions && options.processorOptions.bytebeatCode) || "0";
         this.bytebeatMode = (options.processorOptions && options.processorOptions.bytebeatMode) || "bb";
-
-        this.t = 0;
-        this.lastDisplayT = 0;
-        this.lastDisplayValue = "";
         this.displayThrottleSamples = Math.max(1, Math.floor(this.sampleRate / 60)); // ~16ms
-        this.volume = 1.0;
-        this.lastLeft = 0;
-        this.lastRight = 0;
 
         this.port.onmessage = (e) => {
             const d = e.data;
@@ -48,6 +49,7 @@ class BytebeatProcessor extends AudioWorkletProcessor {
                 this.lastRight = 0;
                 this.lastDisplayT = 0;
                 this.lastDisplayValue = '';
+                // @ts-ignore
                 globalThis.jsteDisplayText = '';
             } else if (d.type === "setId") {
                 this.id = d.id;
@@ -57,15 +59,17 @@ class BytebeatProcessor extends AudioWorkletProcessor {
                 const capturedState = {};
 
                 for (const key of Object.keys(globalThis)) {
-                    if (!this.initialKeys.has(key)) {
+                    if (!this.initialKeys!.has(key)) {
+                        // @ts-ignore
                         let value = globalThis[key];
                         if (typeof value === 'function') {
+                            // @ts-ignore
                             capturedState[key] = {
                                 __type: 'function',
                                 code: value.toString()
                             };
-                        }
-                        else {
+                        } else {
+                            // @ts-ignore
                             capturedState[key] = value;
                         }
                     }
@@ -92,10 +96,10 @@ class BytebeatProcessor extends AudioWorkletProcessor {
                             console.error(`AHHHHH failed to restore function "${key}":`, error);
                             continue;
                         }
-                    }
-                    else {
+                    } else {
                         restoredValue = value;
                     }
+                    // @ts-ignore
                     globalThis[key] = restoredValue;
                 }
             } else if (d.type === "compile") {
@@ -108,6 +112,7 @@ class BytebeatProcessor extends AudioWorkletProcessor {
         if (!this.initialKeys) {
             this.initialKeys = new Set(Object.keys(globalThis));
         }
+        this.bytebeatFunc = () => NaN;
         try {
             if (this.bytebeatMode === "func") {
                 this.bytebeatFunc = Function(this.bytebeatCode)();
@@ -115,19 +120,27 @@ class BytebeatProcessor extends AudioWorkletProcessor {
                 this.bytebeatFunc = Function("t", `return 0,${this.bytebeatCode || 0};`);
             }
         } catch (e) {
-            this.port.postMessage({type: "compileError", message: `${e.name}: ${e.message}`, id: this.id});
-            this.bytebeatFunc = () => NaN;
+            if (e instanceof Error) {
+                this.port.postMessage({type: "compileError", message: `${e.name}: ${e.message}`, id: this.id});
+            } else {
+                console.error("erm wtf", e);
+            }
         }
+
         try {
             if (this.t === 0) {
-                this.bytebeatFunc(0);
+                this.bytebeatFunc!(0);
             }
         } catch (e) {
-            this.port.postMessage({type: "error", t: this.t, message: `${e.name}: ${e.message}`, id: this.id});
+            if (e instanceof Error) {
+                this.port.postMessage({type: "error", t: this.t, message: `${e.name}: ${e.message}`, id: this.id});
+            } else {
+                this.port.postMessage({type: "error", t: this.t, message: `thrown: ${e}`, id: this.id});
+            }
         }
     }
 
-    handle(value) {
+    handle(value: number) {
         if (isNaN(value)) {
             return value;
         }
@@ -139,11 +152,14 @@ class BytebeatProcessor extends AudioWorkletProcessor {
         return (value & 255) / 128 - 1;
     }
 
-    process(inputs, outputs) {
+    // noinspection JSUnusedGlobalSymbols
+    process(_: Float32Array[][], outputs: Float32Array[][]): boolean {
         const output = outputs[0];
         if (!output || output.length < 2) return true;
         const left = output[0];
         const right = output[1];
+
+        this.bytebeatFunc = this.bytebeatFunc!;
 
         for (let i = 0; i < left.length; i++) {
             let tVal = this.t++;
@@ -156,7 +172,11 @@ class BytebeatProcessor extends AudioWorkletProcessor {
                     result = this.bytebeatFunc(tVal);
                 }
             } catch (e) {
-                this.port.postMessage({type: "error", t: tVal, message: `${e.name}: ${e.message}`, id: this.id});
+                if (e instanceof Error) {
+                    this.port.postMessage({type: "error", t: tVal, message: `${e.name}: ${e.message}`, id: this.id});
+                } else {
+                    this.port.postMessage({type: "error", t: tVal, message: `thrown: ${e}`, id: this.id});
+                }
                 left[i] = this.lastLeft;
                 right[i] = this.lastRight;
                 continue;
@@ -192,6 +212,7 @@ class BytebeatProcessor extends AudioWorkletProcessor {
                 this.lastRight = right[i];
             }
 
+            // @ts-ignore
             const currentDisplay = (typeof globalThis.jsteDisplayText !== "undefined") ? String(globalThis.jsteDisplayText) : "";
             if (currentDisplay !== this.lastDisplayValue && (tVal - this.lastDisplayT) >= this.displayThrottleSamples) {
                 this.lastDisplayT = tVal;

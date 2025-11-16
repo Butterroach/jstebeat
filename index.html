@@ -12,45 +12,9 @@
 <body>
 <noscript>
     <h1 id="noscripttext">
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
         THIS USES & REQUIRES JAVASCRIPT ENABLE JAVASCRIPT TO USE THIS
         <br/>
         WHAT ARE YOU EVEN DOING HOW DO YOU SURVIVE WITHOUT JAVASCRIPT
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
     </h1>
 </noscript>
 
@@ -64,6 +28,9 @@
     />
     v<span id="version">ENABLE JAVASCRIPT AHHHHHHHHH</span>
 </h1>
+<div id="success-template" style="display: none;" aria-hidden="true">
+    <i data-feather="check"></i>
+</div>
 <div id="cont1">
     <div id="editor-container">
         <label for="editor">Bytebeat code:</label>
@@ -99,7 +66,7 @@
         </option>
         <option
                 value="func"
-                title="A little exotic. Like floatbeat, but your code is only ran once, and the time is provided in seconds. Your code is ran as raw JavaScript code, where the returned value is expected to be a function. The function is ran with two parameters specified. The first parameter is the time, but in seconds. The second parameter is the sample rate. See the two examples."
+                title="A little exotic as it is not standard, but it's available in most modern players, so it doesn't trigger the exotic warning. Your code is only ran once, and the time is provided in seconds. Your code is ran as raw JavaScript code, where the returned value is expected to be a function. The function is ran with two parameters specified. The first parameter is the time, but in seconds. The second parameter is the sample rate. Expects a floating point output from -1.0 to 1.0. Doesn't wrap around. See the two examples &quot;Example&quot; (by SArpnt) and &quot;boots in bed&quot; (by SArpnt)."
         >
             Funcbeat
         </option>
@@ -107,13 +74,13 @@
                 value="4096exotic"
                 title="EXOTIC. Like bytebeat, but expects an output from 0 to 4095 instead. Wraps around."
         >
-            4096
+            4096 ⚠️
         </option>
         <option
                 value="detailedbeatexotic"
                 title="EXOTIC. Like bytebeat, but floating point detail isn't lost. Uses a more complicated method to wrap stuff around."
         >
-            Detailedbeat
+            Detailedbeat ⚠️
         </option>
     </select>
     <br/>
@@ -122,11 +89,15 @@
         <button type="button" id="play" aria-label="Play" data-on="false"><i data-feather="play"></i></button>
         <button type="button" id="pause" aria-label="Pause" data-on="false"><i data-feather="pause"></i></button>
         <button type="button" id="stop" aria-label="Stop" data-on="true"><i data-feather="square"></i></button>
-        <button id="copylinkbutt" type="button">
-            Copy link
+        <button type="button" id="copycodebutt" aria-label="Copy code" title="Copy code">
+            <i data-feather="copy"></i>
         </button>
-        <button id="copyhashbutt" type="button">
-            Copy hash
+        <button id="copylinkbutt" type="button" aria-label="Copy link" title="Copy link">
+            <i data-feather="link"></i>
+        </button>
+        <button id="copyhashbutt" type="button" aria-label="Copy hash only" title="Copy hash only (dev mode)"
+                data-dev-mode>
+            <i data-feather="hash"></i>
         </button>
     </div>
     <br/>
@@ -141,10 +112,10 @@
     <div id="tcounter">
         <span>t = <span id="t">0</span></span>
     </div>
-    <div id="errorcontainer" style="display: none">
-        <span class="red"
-        ><span>ERROR! <span id="error"></span></span
-        ></span>
+    <div id="error-container" style="display: none">
+        <p class="red"
+        ><span>ERROR!<br/><span id="error"></span></span
+        ></p>
     </div>
     <p>
         Display text (try defining the variable
@@ -160,12 +131,15 @@
     <p id="displayText"></p>
     <br/>
     <h2 id="customization-settings-header">Customization settings</h2>
-    <label for="background-color">Background color:</label>
-    <input
-            type="color"
-            id="background-color"
-    />
-    <button type="button" id="reset-bg">Reset</button>
+    <p><strong>NO. MORE. BACKGROUND COLOR.</strong></p>
+    <span>Theme: </span>
+    <select id="theme" title="Theme">
+        <option value="latte">🌻 Catppuccin Latte</option>
+        <option value="frappe">🪴 Catppuccin Frappé</option>
+        <option value="macchiato">🌺 Catppuccin Macchiato</option>
+        <option value="mocha">🌿 Catppuccin Mocha</option>
+        <option value="legacy">💻 Legacy</option>
+    </select>
     <h2>Examples</h2>
     <p>
         <a
@@ -347,9 +321,49 @@
         (by butterroach, only good for developing jstebeat, this isn't
         even a song, don't click)
     </p>
-    <canvas id="visual" height="256" width="1024"></canvas>
-    <div id="visual-ghost"></div>
+    <hr/>
 </div>
+<footer style="text-align: left;">
+    <p>&copy;Butterroach 2023-present. All rights reserved.</p>
+    <p>This website and all of its code are licensed under the MIT license.</p>
+    <details>
+        <summary>View the MIT license text</summary>
+
+        <p>
+            Permission is hereby granted, free of charge, to any person obtaining a copy
+            of this software and associated documentation files (the "Software"), to deal
+            in the Software without restriction, including without limitation the rights
+            to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+            copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the
+            following conditions:
+        </p>
+
+        <p>
+            The above copyright notice and this permission notice shall be included in all
+            copies or substantial portions of the Software.
+        </p>
+
+        <p>
+            THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+            IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+            FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+            AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+            LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+            OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+            SOFTWARE.
+        </p>
+    </details>
+    <p>
+        The JStebeat branding may <strong>NOT</strong> be used in any derivative work in a manner that suggests
+        affiliation, or endorsement by the original author(s).
+    </p>
+    <p>
+        Derivative projects may only use the JStebeat name <strong>purely for descriptive purposes</strong>.
+    </p>
+    <p>All branding rights not expressly granted are reserved.</p>
+</footer>
+<canvas id="visual" height="256" width="1024"></canvas>
+<div id="visual-ghost"></div>
 <script type="module" src="src/main.ts"></script>
 <script>
     // noinspection JSUnresolvedReference

@@ -1,7 +1,7 @@
 {
   "name": "jstebeat",
   "private": true,
-  "version": "5.1.2",
+  "version": "6.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -11,13 +11,15 @@
   "devDependencies": {
     "@types/node": "^24.6.2",
     "typescript": "~5.8.3",
-    "vite": "^7.1.7"
+    "vite": "7.1.11"
   },
   "dependencies": {
     "@catppuccin/codemirror": "^1.0.1",
+    "@catppuccin/palette": "^1.7.1",
     "@codemirror/lang-javascript": "^6.2.4",
     "@codemirror/state": "^6.5.2",
     "@codemirror/view": "^6.38.4",
+    "@types/audioworklet": "^0.0.87",
     "codemirror": "^6.0.2"
   }
 }

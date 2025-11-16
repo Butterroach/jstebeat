@@ -6,7 +6,8 @@
 Inspired by [SthephanShi's](https://www.dollchan.net/bytebeat) and
 [psubscirbe's](https://psubscirbe-bytebeat.neocities.org/) players, but not forked from any player.
 
-Planned to be made with vanilla HTML/CSS & TypeScript (no libraries other than CodeMirror).
+Planned to be made with vanilla HTML/CSS & TypeScript (no libraries other than CodeMirror and minor libraries, and
+absolutely no frameworks).
 
 ### "Can you add my song to the library pls"
 
@@ -18,12 +19,22 @@ No. **Don't even open an issue about that**. The `library` issue tag is for mist
 2. `npm install`
 
 Any changes relating to CSS (i.e. styling) are in `src/index.css` (CSS).
-Any changes relating to the website structure itself are in `index.html` (HTML).
-Any changes relating to the bytebeat processor (audio handling, running the bytebeat, etc.) are in `public/bytebeat-processor.js` (JavaScript).
-Any changes relating to any other code are in `src/index.ts` (TypeScript).
-Any changes relating to configuration of the process of bundling (turning the website into HTML/CSS/JS that the browser can run) are in `vite.config.ts` (TypeScript).
 
-If you're forking into your own project, ***__CHANGE THE NAME AND LOGO, AND CHANGE THE COPYRIGHT STATEMENT IN `LICENSE`__***.
+Any changes relating to color schemes and themes are in `src/colors.css` (CSS). Add new themes in the selection menu.
+If you want to make a visualizer theme, you will need to create a TypeScript object holding your color scheme,
+compatible with Catppuccin objects.
+
+Any changes relating to the website structure itself are in `index.html` (HTML).
+
+Any changes relating to the bytebeat processor (audio handling, running the bytebeat, etc., excluding visualizer
+handling, including handling code state) are in `src/bytebeat-processor.ts` (TypeScript).
+
+Any changes relating to any other code are in `src/index.ts` (TypeScript).
+
+Any changes relating to configuration of the bundler are in `vite.config.ts` (TypeScript).
+
+If you're forking into your own project, ***__CHANGE THE NAME AND LOGO, AND CHANGE THE COPYRIGHT STATEMENT IN
+`LICENSE`__***.
 
 ### "GDI malware?"
 
@@ -80,4 +91,4 @@ Google it.
 In monkey terms:
 
 funny code do funny math. funny math do funny sound. funny sound go boom boom boom. boom boom boom do good sound. good
-sound do woaaaaa 
+sound do woaaaaa
