@@ -8,6 +8,8 @@ import {flavors} from '@catppuccin/palette';
 const versionElement = document.getElementById("version") as HTMLSpanElement;
 versionElement.textContent = __APP_VERSION__;
 
+const successTemplate = document.getElementById("success-template") as HTMLDivElement;
+
 let audioContext: AudioContext | null;
 const canvas = document.getElementById('visual') as HTMLCanvasElement;
 const ctx = canvas.getContext("2d")!;
@@ -264,7 +266,7 @@ async function copyLink() {
         window.location.origin + window.location.pathname + calcHash()
     );
     let originalHTML = copyLinkButton.innerHTML;
-    copyLinkButton.innerHTML = "Copied!";
+    copyLinkButton.innerHTML = successTemplate.innerHTML;
     setTimeout(function () {
         copyLinkButton.innerHTML = originalHTML;
     }, 3000);
@@ -289,7 +291,7 @@ async function copyHash() {
         calcHash()
     );
     let originalHTML = copyHashButton.innerHTML;
-    copyHashButton.innerHTML = "Copied!";
+    copyHashButton.innerHTML = successTemplate.innerHTML;
     setTimeout(function () {
         copyHashButton.innerHTML = originalHTML;
     }, 3000);
@@ -301,7 +303,7 @@ async function copyCode() {
         view.state.doc.toString()
     );
     let originalHTML = copyCodeButton.innerHTML;
-    copyCodeButton.innerHTML = "Copied!";
+    copyCodeButton.innerHTML = successTemplate.innerHTML;
     setTimeout(function () {
         copyCodeButton.innerHTML = originalHTML;
     }, 3000);
