@@ -168,8 +168,6 @@ class BytebeatProcessor extends AudioWorkletProcessor {
             return false;
         }
 
-        console.log("nay...")
-
         const output = outputs[0];
         if (!output || output.length < 2) return true;
         const left = output[0];

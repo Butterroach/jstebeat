@@ -149,11 +149,11 @@ volume.addEventListener("change", () => {
     localStorage.setItem("volume", volume.value);
 });
 
-sampleRate.addEventListener("change", () => {
+setTimeout(() => sampleRate.addEventListener("change", () => {
     window.location.hash = calcHash();
-})
+}), 200)
 
-bytebeatMode.onchange = () => {
+setTimeout(() => bytebeatMode.onchange = () => {
     window.location.hash = calcHash();
     if (bytebeatMode.value.endsWith("exotic")) {
         if (!alreadyAppended) {
@@ -171,7 +171,7 @@ bytebeatMode.onchange = () => {
         exoticWarningText.remove();
         nonExoticButton.remove();
     }
-}
+}, 200)
 
 function updateBackgroundHelper() {
     if (err) {
@@ -204,7 +204,9 @@ const view = new EditorView({
 view.dom.style.height = "100%";
 
 updateTheme();
-bytebeatMode.onchange(new Event("change"));
+
+// @ts-ignore
+setTimeout(bytebeatMode.onchange, 300)
 
 function splitHash(hash: string = window.location.hash): string[] {
     if (hash) {
@@ -229,7 +231,7 @@ function splitHash(hash: string = window.location.hash): string[] {
 }
 
 // @ts-ignore
-(globalThis.hash_change = (hash = window.location.hash) => {
+setTimeout((globalThis.hashChange = (hash = window.location.hash) => {
     if (hash) {
         let hashParts = splitHash(hash);
         view.dispatch({
@@ -242,9 +244,9 @@ function splitHash(hash: string = window.location.hash): string[] {
         sampleRate.value = hashParts[1];
         bytebeatMode.value = hashParts[2];
     }
-})();
+}), 100);
 
-setInterval(() => window.location.hash = calcHash(), 100);
+setInterval(() => window.location.hash = calcHash(), 1000);
 
 function base64ToBytes(base64: string) {
     const binString = atob(base64);
