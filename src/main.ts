@@ -18,7 +18,7 @@ const customizationSettingsHeader = document.getElementById("customization-setti
 const themeSelection = document.getElementById("theme") as HTMLSelectElement;
 let inside = false;
 let currentNodeId: number;
-let snapshot: unknown = null;
+// let snapshot: unknown = null;
 let isPlaying = false;
 let isPaused = false;
 let tJstebeat = 0; // different name to not break some stuff
@@ -436,26 +436,27 @@ async function playBytebeat() {
 
     bytebeatCode = unwrapMinibake(bytebeatCode);
 
-    if (!audioContext) audioContext = new AudioContext({sampleRate: parseInt(sampleRate.value)});
+    if (!audioContext) {
+        audioContext = new AudioContext({sampleRate: parseInt(sampleRate.value)});
 
-    try {
-        await audioContext.audioWorklet.addModule(workletUrl);
-    } catch (err) {
+        try {
+            await audioContext.audioWorklet.addModule(workletUrl);
+        } catch (err) {
+        }
     }
 
-    bytebeatNode = new AudioWorkletNode(audioContext, "bytebeat-processor", {
-        outputChannelCount: [2],
-        processorOptions: {
-            sampleRate: audioContext.sampleRate,
-            bytebeatCode,
-            bytebeatMode: bytebeatMode.value,
-            bufferSize: 2048
-        }
-    });
-
-    if (snapshot) {
-        bytebeatNode.port.postMessage({type: "setState", state: snapshot});
-        snapshot = null;
+    if (!bytebeatNode) {
+        bytebeatNode = new AudioWorkletNode(audioContext, "bytebeat-processor", {
+            outputChannelCount: [2],
+            processorOptions: {
+                sampleRate: audioContext.sampleRate,
+                bytebeatCode,
+                bytebeatMode: bytebeatMode.value,
+                bufferSize: 2048
+            }
+        });
+    } else {
+        bytebeatNode?.port.postMessage({type: "play"});
     }
 
     bytebeatNode.port.onmessage = handleWorkletMessage;
@@ -492,23 +493,13 @@ async function playBytebeat() {
     }
 }
 
-function saveBytebeatState(node: AudioWorkletNode) {
-    return new Promise((resolve) => {
-        const handler = (e: { data: { type: string; id: number; state: unknown; }; }) => {
-            if (e.data.type === "state" && e.data.id === currentNodeId) {
-                node.port.removeEventListener("message", handler);
-                resolve(e.data.state);
-            }
-        };
-        node.port.addEventListener("message", handler);
-        node.port.postMessage({type: "getState"});
-    });
-}
-
 /**
  * why does jetbrains want me to make this func omg
  */
 async function destroyBytebeat() {
+    // you should kill yourself... NOW
+    bytebeatNode?.port.postMessage({type: "kill"});
+
     if (bytebeatNode) {
         try {
             bytebeatNode.disconnect();
@@ -527,6 +518,8 @@ async function destroyBytebeat() {
 }
 
 async function pauseBytebeat() {
+    bytebeatNode?.port.postMessage({type: "pause"}); // i'm crying i could've just done this the whole time
+
     if (!isPlaying) return;
     isPaused = true;
     isPlaying = false;
@@ -534,12 +527,6 @@ async function pauseBytebeat() {
     document.getElementById("play")!.dataset.on = "false";
     document.getElementById("pause")!.dataset.on = "true";
     document.getElementById("stop")!.dataset.on = "false";
-
-    snapshot = await saveBytebeatState(bytebeatNode!)
-
-    await destroyBytebeat();
-
-    tCounter.textContent = String(tJstebeat);
 }
 
 async function stopBytebeat() {

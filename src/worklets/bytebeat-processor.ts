@@ -12,6 +12,8 @@ class BytebeatProcessor extends AudioWorkletProcessor {
     private lastRight: number = 0;
     private initialKeys: Set<string> | null = null;
     private bytebeatFunc: Function | null = null;
+    private suicide: boolean = false;
+    private paused: boolean = false;
 
     constructor(options: { processorOptions: { sampleRate: number; bytebeatCode: string; bytebeatMode: string; }; }) {
         super();
@@ -55,55 +57,62 @@ class BytebeatProcessor extends AudioWorkletProcessor {
                 this.id = d.id;
             } else if (d.type === "setT") {
                 this.t = d.t;
-            } else if (e.data.type === "getState") {
-                const capturedState = {};
-
-                for (const key of Object.keys(globalThis)) {
-                    if (!this.initialKeys!.has(key)) {
-                        // @ts-ignore
-                        let value = globalThis[key];
-                        if (typeof value === 'function') {
-                            // @ts-ignore
-                            capturedState[key] = {
-                                __type: 'function',
-                                code: value.toString()
-                            };
-                        } else {
-                            // @ts-ignore
-                            capturedState[key] = value;
-                        }
-                    }
-                }
-
-                console.log(capturedState);
-
-                this.port.postMessage({
-                    type: "state",
-                    state: capturedState,
-                    id: this.id
-                });
-            } else if (d.type === "setState") {
-                this.initialKeys = new Set(Object.keys(globalThis));
-                const savedState = e.data.state;
-                for (const key in savedState) {
-                    if (!Object.hasOwn(savedState, key)) continue;
-                    let value = savedState[key];
-                    let restoredValue;
-                    if (typeof value === 'object' && value !== null && value.__type === 'function') {
-                        try {
-                            restoredValue = new Function('return ' + value.code)();
-                        } catch (error) {
-                            console.error(`AHHHHH failed to restore function "${key}":`, error);
-                            continue;
-                        }
-                    } else {
-                        restoredValue = value;
-                    }
-                    // @ts-ignore
-                    globalThis[key] = restoredValue;
-                }
+            // } else if (e.data.type === "getState") {
+            //     const capturedState = {};
+            //
+            //     for (const key of Object.keys(globalThis)) {
+            //         if (!this.initialKeys!.has(key)) {
+            //             // @ts-ignore
+            //             let value = globalThis[key];
+            //             if (typeof value === 'function') {
+            //                 // @ts-ignore
+            //                 capturedState[key] = {
+            //                     __type: 'function',
+            //                     code: value.toString()
+            //                 };
+            //             } else {
+            //                 // @ts-ignore
+            //                 capturedState[key] = value;
+            //             }
+            //         }
+            //     }
+            //
+            //     console.log(capturedState);
+            //
+            //     this.port.postMessage({
+            //         type: "state",
+            //         state: JSON.parse(JSON.stringify(capturedState)),
+            //         id: this.id
+            //     });
+            // } else if (d.type === "setState") {
+            //     this.initialKeys = new Set(Object.keys(globalThis));
+            //     const savedState = e.data.state;
+            //     for (const key in savedState) {
+            //         if (!Object.hasOwn(savedState, key)) continue;
+            //         let value = savedState[key];
+            //         let restoredValue;
+            //         if (typeof value === 'object' && value !== null && value.__type === 'function') {
+            //             try {
+            //                 restoredValue = new Function('return ' + value.code)();
+            //             } catch (error) {
+            //                 console.error(`AHHHHH failed to restore function "${key}":`, error);
+            //                 continue;
+            //             }
+            //         } else {
+            //             restoredValue = value;
+            //         }
+            //         // @ts-ignore
+            //         globalThis[key] = restoredValue;
+            //     }
             } else if (d.type === "compile") {
                 this.compileBytebeat();
+            } else if (d.type === "kill") {
+                this.suicide = true;
+                console.log("yay")
+            } else if (d.type === "pause") {
+                this.paused = true;
+            } else if (d.type === "play") {
+                this.paused = false;
             }
         };
     }
@@ -154,12 +163,25 @@ class BytebeatProcessor extends AudioWorkletProcessor {
 
     // noinspection JSUnusedGlobalSymbols
     process(_: Float32Array[][], outputs: Float32Array[][]): boolean {
+        if (this.suicide) {
+            // im feeling depresed :pensive:
+            return false;
+        }
+
+        console.log("nay...")
+
         const output = outputs[0];
         if (!output || output.length < 2) return true;
         const left = output[0];
         const right = output[1];
 
         this.bytebeatFunc = this.bytebeatFunc!;
+
+        if (this.paused) {
+            left.fill(this.lastLeft)
+            right.fill(this.lastRight)
+            return true;
+        }
 
         for (let i = 0; i < left.length; i++) {
             let tVal = this.t++;
