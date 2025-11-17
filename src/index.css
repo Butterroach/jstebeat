@@ -386,3 +386,7 @@ hr {
     border: solid 1px var(--surface2);
     border-radius: 1.5rem;
 }
+
+html[data-dev-mode="false"] *[data-dev-mode] {
+    display: none;
+}
