@@ -33,8 +33,8 @@ Any changes relating to any other code are in `src/index.ts` (TypeScript).
 
 Any changes relating to configuration of the bundler are in `vite.config.ts` (TypeScript).
 
-If you're forking into your own project, ***__CHANGE THE NAME AND LOGO, AND CHANGE THE COPYRIGHT STATEMENT IN
-`LICENSE`__***.
+If you're forking into your own project, ***__CHANGE THE NAME AND LOGO, AND ADD YOUR COPYRIGHT STATEMENT
+(WITHOUT REMOVING THE ORIGINALS) IN `LICENSE`__***.
 
 ### "GDI malware?"
 
