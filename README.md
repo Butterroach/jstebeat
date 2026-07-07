@@ -1,4 +1,4 @@
-[<p align="center"><img src="public/jstebeat-logo.webp" alt="JStebeat logo"></p>](https://butterroach.github.io/jstebeat/)
+[<p align="center"><img src="public/jstebeat-logo-v7.png" alt="JStebeat logo" width="240" height="240"></p>](https://butterroach.github.io/jstebeat/)
 
 # [JStebeat](https://butterroach.github.io/jstebeat/)
 ## Online bytebeat player with some examples
