@@ -4,11 +4,14 @@ import {javascript} from "@codemirror/lang-javascript";
 import {catppuccinLatte, catppuccinFrappe, catppuccinMacchiato, catppuccinMocha} from "@catppuccin/codemirror";
 import workletUrl from './worklets/bytebeat-processor.ts?worker&url';
 import {flavors} from '@catppuccin/palette';
+import feather from 'feather-icons';
+
+feather.replace();
 
 const versionElement = document.getElementById("version") as HTMLSpanElement;
 versionElement.textContent = __APP_VERSION__;
 
-const successTemplate = document.getElementById("success-template") as HTMLDivElement;
+const successTemplate = document.getElementById("success-template") as HTMLTemplateElement;
 
 let audioContext: AudioContext | null;
 const canvas = document.getElementById('visual') as HTMLCanvasElement;
@@ -16,8 +19,14 @@ const ctx = canvas.getContext("2d")!;
 const volume = document.getElementById("volume") as HTMLInputElement;
 const bytebeatMode = document.getElementById("mode") as HTMLSelectElement;
 const sampleRate = document.getElementById("sample-rate") as HTMLInputElement;
+const sampleRateSelect = document.getElementById("sample-rate-select") as HTMLSelectElement;
+const sampleRates = document.getElementById("sample-rates") as HTMLInputElement;
+const codeLength = document.getElementById("code-length") as HTMLSpanElement;
+const codeBytes = document.getElementById("code-bytes") as HTMLSpanElement;
 const customizationSettingsHeader = document.getElementById("customization-settings-header")!;
 const themeSelection = document.getElementById("theme") as HTMLSelectElement;
+const visualsCheck = document.getElementById("visuals") as HTMLInputElement;
+let imageData = ctx.createImageData(canvas.width, canvas.height);
 let inside = false;
 let currentNodeId: number;
 // let snapshot: unknown = null;
@@ -34,6 +43,7 @@ let bytebeatNode: AudioWorkletNode | null = null;
 let dontDelete: string[] = [];
 let alreadyAppended = false;
 let tCounter: HTMLSpanElement = document.getElementById("t")!;
+let volumeValue: HTMLSpanElement = document.getElementById("volume-value")!;
 let exoticWarningHeader = document.createElement("h2");
 let exoticWarningText = document.createElement("p");
 let nonExoticButton = document.createElement("button");
@@ -70,6 +80,67 @@ nonExoticButton.onclick = async function () {
     }, 3000);
 };
 
+function splitHash(hash: string = window.location.hash): string[] {
+    if (hash) {
+        let hashParts;
+        if (hash.startsWith("#v6$")) {
+            hashParts = hash.substring(4).split(".");
+            hashParts = [hashParts[0], ...hashParts[1].split("~")];
+        } else {
+            console.log(hash)
+            hashParts = hash.substring(1).split("@");
+            hashParts = [hashParts[0], ...hashParts[1].split("]")];
+        }
+        console.log(hashParts);
+        hashParts[0] = new TextDecoder().decode(base64ToBytes(hashParts[0]));
+        return hashParts;
+    }
+    return [
+        "(t&1024||t&16384&&t&2048&&!(t&512))?(t&4096&&!(t&2048)?(t*t*t>>~t*t)+127:t*((t>>11&1)+1)*(1+(t>>16&1)*3))*2:0",
+        "8000",
+        "bb"
+    ];
+}
+
+function setImagePixel(x: number, y: number, {r, g, b}: { r: number, g: number, b: number }) {
+    const i = (y * canvas.width + x) * 4;
+    imageData.data[i] = r;
+    imageData.data[i + 1] = g;
+    imageData.data[i + 2] = b;
+    imageData.data[i + 3] = 255;
+}
+
+let [oldSampleRate, oldMode] = splitHash().slice(1);
+
+sampleRateSelect.value = "";
+
+if (localStorage.getItem("sampleRateLists") === null) {
+    localStorage.setItem(
+        "sampleRateLists",
+        JSON.stringify(["8000", "11025", "16000", "22050", "32000", "44100", "48000"])
+    );
+}
+
+function refreshSampleRateSelect() {
+    sampleRateSelect.options.length = 0;
+    for (let rate of JSON.parse(localStorage.getItem("sampleRateLists")!)) {
+        sampleRateSelect.add(new Option(rate + "hz", rate));
+    }
+}
+
+sampleRates.value = "";
+
+sampleRates.addEventListener("change", () => {
+    localStorage.setItem("sampleRateLists", JSON.stringify(JSON.parse(sampleRates.value)));
+    refreshSampleRateSelect();
+})
+
+sampleRates.value = localStorage.getItem("sampleRateLists")!;
+
+refreshSampleRateSelect();
+
+sampleRate.value = oldSampleRate;
+
 let clickTimes: number[] = [];
 
 function devModeHandle() {
@@ -96,6 +167,8 @@ versionElement.addEventListener("click", () => {
         devModeHandle();
     }
 });
+
+volume.addEventListener("input", () => volumeValue.textContent = volume.value + "%");
 
 let theme = localStorage.getItem("theme");
 
@@ -153,7 +226,7 @@ setTimeout(() => sampleRate.addEventListener("change", () => {
     window.location.hash = calcHash();
 }), 200)
 
-setTimeout(() => bytebeatMode.onchange = () => {
+setInterval(bytebeatMode.onchange = () => {
     window.location.hash = calcHash();
     if (bytebeatMode.value.endsWith("exotic")) {
         if (!alreadyAppended) {
@@ -171,7 +244,7 @@ setTimeout(() => bytebeatMode.onchange = () => {
         exoticWarningText.remove();
         nonExoticButton.remove();
     }
-}, 200)
+}, 50)
 
 function updateBackgroundHelper() {
     if (err) {
@@ -207,28 +280,6 @@ updateTheme();
 
 // @ts-ignore
 setTimeout(bytebeatMode.onchange, 300)
-
-function splitHash(hash: string = window.location.hash): string[] {
-    if (hash) {
-        let hashParts;
-        if (hash.startsWith("#v6$")) {
-            hashParts = hash.substring(4).split(".");
-            hashParts = [hashParts[0], ...hashParts[1].split("~")];
-        } else {
-            console.log(hash)
-            hashParts = hash.substring(1).split("@");
-            hashParts = [hashParts[0], ...hashParts[1].split("]")];
-        }
-        console.log(hashParts);
-        hashParts[0] = new TextDecoder().decode(base64ToBytes(hashParts[0]));
-        return hashParts;
-    }
-    return [
-        "(t&1024||t&16384&&t&2048&&!(t&512))?(t&4096&&!(t&2048)?(t*t*t>>~t*t)+127:t*((t>>11&1)+1)*(1+(t>>16&1)*3))*2:0",
-        "8000",
-        "bb"
-    ];
-}
 
 // @ts-ignore
 setTimeout((globalThis.hashChange = (hash = window.location.hash) => {
@@ -275,12 +326,12 @@ async function copyLink() {
 }
 
 function calcHash() {
+    let code = view.state.doc.toString();
+    let codeEncoded = new TextEncoder().encode(code);
+    codeLength.textContent = [...code].length.toString();
+    codeBytes.textContent = codeEncoded.length.toString();
     return "#v6$" +
-        bytesToBase64(
-            new TextEncoder().encode(
-                view.state.doc.toString()
-            )
-        ) +
+        bytesToBase64(codeEncoded) +
         "." +
         sampleRate.value +
         "~" +
@@ -343,8 +394,9 @@ function unwrapMinibake(bytebeatCode: string) {
 
 function handleWorkletError(t: number, errorMessage: string) {
     const x = t % canvas.width;
-    ctx.fillStyle = activeTheme.colors.red.hex;
-    ctx.fillRect(x, 0, 1, canvas.height);
+    for (let y = 0; y < canvas.height; y++) {
+        setImagePixel(x, y, activeTheme.colors.red.rgb);
+    }
 
     const errorContainer = document.getElementById("error-container");
     const errorText = document.getElementById("error");
@@ -365,46 +417,45 @@ function handleWorkletMessage(e: {
     }
     const d = e.data;
 
-    if (d.type === "visual") {
-        tJstebeat = d.t;
-        if (tJstebeat % 512 === 0) {
-            tCounter.textContent = String(tJstebeat);
-        }
+    tJstebeat = d.t;
+
+    if (d.type === "visual" && visualsCheck.checked) {
         const x = d.t % canvas.width;
-        ctx.fillStyle = activeTheme.colors.crust.hex;
-        ctx.fillRect(x, 0, 1, canvas.height);
+        for (let y = 0; y < canvas.height; y++) {
+            setImagePixel(x, y, activeTheme.colors.crust.rgb);
+        }
 
         const leftY = (((-d.left) + 1) * 127) & 255;
         const rightY = (((-d.right) + 1) * 127) & 255;
 
         if (leftY === rightY) {
             if (isNaN(d.left)) {
-                ctx.fillStyle = activeTheme.colors.red.hex;
-                ctx.fillRect(x, 0, 1, canvas.height);
+                for (let y = 0; y < canvas.height; y++) {
+                    setImagePixel(x, y, activeTheme.colors.red.rgb);
+                }
             } else {
-                ctx.fillStyle = activeTheme.colors.text.hex;
-                ctx.fillRect(x, leftY, 1, 1);
+                setImagePixel(x, leftY, activeTheme.colors.text.rgb);
             }
         } else {
             if (isNaN(d.left)) {
-                ctx.fillStyle = activeTheme.colors.red.hex;
-                ctx.fillRect(x, 0, 1, canvas.height);
+                for (let y = 0; y < canvas.height; y++) {
+                    setImagePixel(x, y, activeTheme.colors.red.rgb);
+                }
             } else {
-                ctx.fillStyle = activeTheme.colors.peach.hex;
-                ctx.fillRect(x, leftY, 1, 1);
+                setImagePixel(x, leftY, activeTheme.colors.peach.rgb);
             }
             if (isNaN(d.right)) {
-                ctx.fillStyle = activeTheme.colors.red.hex;
-                ctx.fillRect(x, 0, 1, canvas.height);
+                for (let y = 0; y < canvas.height; y++) {
+                    setImagePixel(x, y, activeTheme.colors.red.rgb);
+                }
             } else {
-                ctx.fillStyle = activeTheme.colors.blue.hex;
-                ctx.fillRect(x, rightY, 1, 1);
+                setImagePixel(x, rightY, activeTheme.colors.blue.rgb);
             }
         }
 
     } else if (d.type === "display") {
         if (d.text !== undefined) {
-            document.getElementById("displayText")!.textContent = "​ ​ ​ ​" + d.text + "​ ​ ​ ​";
+            document.getElementById("displayText")!.textContent = d.text;
         }
     } else if (d.type === "error") {
         handleWorkletError(d.t, d.message);
@@ -518,8 +569,22 @@ async function destroyBytebeat() {
         audioContext = null;
     }
 
-    currentNodeId = Date.now(); // IMPORTANT!!!!! AHHHHHH
+    currentNodeId = Date.now();
 }
+
+visualsCheck.addEventListener("change", () => {
+    localStorage.setItem("visualsCheck", JSON.stringify(visualsCheck.checked));
+    for (let y = 0; y < canvas.height; y++) {
+        for (let x = 0; x < canvas.width; x++) {
+            setImagePixel(x, y, activeTheme.colors.crust.rgb);
+        }
+    }
+    if (visualsCheck.checked) {
+        canvas.style.opacity = "";
+    } else {
+        canvas.style.opacity = "0";
+    }
+});
 
 async function pauseBytebeat() {
     bytebeatNode?.port.postMessage({type: "pause"}); // i'm crying i could've just done this the whole time
@@ -536,6 +601,8 @@ async function pauseBytebeat() {
 async function stopBytebeat() {
     if (!isPlaying && !isPaused) return;
 
+    imageData = new ImageData(canvas.width, canvas.height); // not doing this causes lag sometimes
+
     document.getElementById("play")!.dataset.on = "false";
     document.getElementById("pause")!.dataset.on = "false";
     document.getElementById("stop")!.dataset.on = "true";
@@ -545,8 +612,11 @@ async function stopBytebeat() {
 
     await destroyBytebeat();
 
-    ctx.fillStyle = activeTheme.colors.crust.hex;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    for (let y = 0; y < canvas.height; y++) {
+        for (let x = 0; x < canvas.width; x++) {
+            setImagePixel(x, y, activeTheme.colors.crust.rgb);
+        }
+    }
 
 
     // this definitely won't break anything
@@ -573,15 +643,36 @@ async function stopBytebeat() {
     }
 }
 
-ctx.fillStyle = activeTheme.colors.crust.hex;
-ctx.fillRect(0, 0, canvas.width, canvas.height);
+for (let y = 0; y < canvas.height; y++) {
+    for (let x = 0; x < canvas.width; x++) {
+        setImagePixel(x, y, activeTheme.colors.crust.rgb);
+    }
+}
 
-document.getElementById("play")!.addEventListener("click", playBytebeat)
-document.getElementById("pause")!.addEventListener("click", pauseBytebeat)
-document.getElementById("stop")!.addEventListener("click", stopBytebeat)
-document.getElementById("copycodebutt")!.addEventListener("click", copyCode)
-document.getElementById("copyhashbutt")!.addEventListener("click", copyHash)
-document.getElementById("copylinkbutt")!.addEventListener("click", copyLink)
+document.getElementById("play")!.addEventListener("click", playBytebeat);
+document.getElementById("pause")!.addEventListener("click", pauseBytebeat);
+document.getElementById("stop")!.addEventListener("click", stopBytebeat);
+document.getElementById("copycodebutt")!.addEventListener("click", copyCode);
+document.getElementById("copyhashbutt")!.addEventListener("click", copyHash);
+document.getElementById("copylinkbutt")!.addEventListener("click", copyLink);
+document.getElementById("sample-rate-select-open")!.addEventListener(
+    "click", () => sampleRateSelect.showPicker()
+);
+sampleRateSelect.addEventListener("change", () => {
+    sampleRate.value = sampleRateSelect.value
+});
+
+function sampleRateSelectSet() {
+    if ([...sampleRateSelect.options].map(opt => opt.value).includes(sampleRate.value)) {
+        sampleRateSelect.value = sampleRate.value;
+    } else {
+        sampleRateSelect.value = "";
+    }
+}
+
+sampleRate.addEventListener("change", sampleRateSelectSet);
+
+sampleRateSelectSet();
 
 function onPointerMove(e: { clientX: number; clientY: number; }) {
     const r = canvas.getBoundingClientRect();
@@ -599,5 +690,29 @@ window.addEventListener('blur', () => {
     canvas.classList.remove('hover');
 });
 
-ctx.fillStyle = activeTheme.colors.crust.hex;
-ctx.fillRect(0, 0, canvas.width, canvas.height);
+for (let y = 0; y < canvas.height; y++) {
+    for (let x = 0; x < canvas.width; x++) {
+        setImagePixel(x, y, activeTheme.colors.crust.rgb);
+    }
+}
+
+function frame() {
+    tCounter.textContent = String(tJstebeat);
+    ctx.putImageData(imageData, 0, 0);
+    requestAnimationFrame(frame);
+}
+
+frame()
+
+if (localStorage.getItem("visualsCheck") === null) {
+    localStorage.setItem("visualsCheck", JSON.stringify(visualsCheck.checked));
+}
+
+sampleRate.value = oldSampleRate;
+bytebeatMode.value = oldMode;
+
+console.log(oldSampleRate);
+console.log(sampleRate.value);
+
+visualsCheck.checked = JSON.parse(localStorage.getItem("visualsCheck")!);
+visualsCheck.dispatchEvent(new Event('change'));

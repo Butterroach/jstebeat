@@ -4,10 +4,50 @@
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <link href="jstebeat-favicon.ico" rel="shortcut icon"/>
+    <link rel="icon" href="/jstebeat/jstebeat-favicon-v7.ico" sizes="any">
+    <link rel="shortcut icon" href="/jstebeat/jstebeat-favicon-v7.ico">
+    <link rel="apple-touch-icon" href="/jstebeat/icon-180.png">
     <link href="src/index.css" rel="stylesheet"/>
     <title>JStebeat</title>
-    <script src="https://unpkg.com/feather-icons"></script>
+
+    <meta name="description"
+          content="Browser-based open source bytebeat player for writing and playing bytebeat and other *-beats and sharing creations">
+
+    <meta name="keywords"
+          content="bytebeat, browser bytebeat, online bytebeat, bytebeat player, floatbeat, funcbeat, algorithmic music, procedural audio, mathematical music, audio synthesis, open source">
+
+    <meta name="author" content="butterroach">
+
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="JStebeat">
+    <meta property="og:description"
+          content="Browser-based open source bytebeat player for writing and playing bytebeat and other *-beats and sharing creations">
+    <meta property="og:url" content="https://butterroach.github.io/jstebeat/">
+    <meta property="og:image" content="https://butterroach.github.io/jstebeat/jstebeat-logo-v7.png">
+
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="JStebeat">
+    <meta name="twitter:description"
+          content="Write and play bytebeat and other *-beats online">
+    <meta name="twitter:image" content="https://butterroach.github.io/jstebeat/jstebeat-logo-v7.png">
+
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "WebApplication",
+            "name": "JStebeat",
+            "applicationCategory": "MultimediaApplication",
+            "operatingSystem": "All",
+            "browserRequirements": "Requires JavaScript and HTML5 Audio API support",
+            "url": "https://butterroach.github.io/jstebeat/",
+            "description": "Browser-based open source bytebeat player for writing and playing bytebeat and other *-beats and sharing creations",
+            "license": "https://github.com/Butterroach/jstebeat/blob/main/LICENSE",
+            "creator": {
+                "@type": "Person",
+                "name": "butterroach"
+            }
+        }
+    </script>
 </head>
 <body>
 <noscript>
@@ -20,7 +60,7 @@
 
 <h1>
     <img
-            src="jstebeat-logo.webp"
+            src="jstebeat-logo-v7.png"
             alt="JStebeat"
             title="JStebeat"
             width="144"
@@ -31,19 +71,32 @@
 <div id="success-template" style="display: none;" aria-hidden="true">
     <i data-feather="check"></i>
 </div>
-<div id="cont1">
+<div id="cont1" role="main">
     <div id="editor-container">
         <label for="editor">Bytebeat code:</label>
         <div id="editor"></div>
     </div>
     <br/>
-    <label for="sample-rate">Sample rate (in Hz):</label>
-    <input
-            id="sample-rate"
-            type="number"
-            value="8000"
-            style="width: 70px"
-    />
+    <fieldset>
+        <legend>Sample rate (in Hz):</legend>
+        <div id="input-combo">
+            <input
+                    id="sample-rate"
+                    type="number"
+                    value="8000"
+                    aria-label="Sample rate (in Hz)"
+                    style="width: 70px"
+            />
+            <button type="button" id="sample-rate-select-open" title="Open sample rate selection menu"
+                    aria-hidden="true"
+                    tabindex="-1">
+                <i data-feather="chevron-down"></i>
+            </button>
+        </div>
+        <select id="sample-rate-select" aria-label="Sample rate selection menu" title="Sample rate selection menu">
+            <option value="" disabled selected hidden>stupid</option>
+        </select>
+    </fieldset>
     <select id="mode" title="Mode">
         <option
                 value="bb"
@@ -83,12 +136,19 @@
             Detailedbeat ⚠️
         </option>
     </select>
+    <span><span id="code-length-container"><span id="code-length">0</span></span>c/<span id="code-bytes-container"><span
+            id="code-bytes">0</span>b</span></span>
+    <span style="text-decoration: underline dashed;"
+          title="Shows the code length in both characters (c) and bytes (b). Characters are just characters. Byte length is usually identical to character length, but if the code has characters like emojis or CJK, they will diverge.">?</span>
     <br/>
     <br/>
     <div id="buttons-container">
-        <button type="button" id="play" aria-label="Play" data-on="false"><i data-feather="play"></i></button>
-        <button type="button" id="pause" aria-label="Pause" data-on="false"><i data-feather="pause"></i></button>
-        <button type="button" id="stop" aria-label="Stop" data-on="true"><i data-feather="square"></i></button>
+        <button type="button" id="play" aria-label="Play" title="Play" data-on="false"><i data-feather="play"></i>
+        </button>
+        <button type="button" id="pause" aria-label="Pause" title="Pause" data-on="false"><i data-feather="pause"></i>
+        </button>
+        <button type="button" id="stop" aria-label="Stop" title="Stop" data-on="true"><i data-feather="square"></i>
+        </button>
         <button type="button" id="copycodebutt" aria-label="Copy code" title="Copy code">
             <i data-feather="copy"></i>
         </button>
@@ -104,10 +164,10 @@
     <br/>
     <div id="volume-container">
         <label for="volume">Volume: </label>
-        <div class="slider-container">
-            <input id="volume" type="range" min="0" max="100" value="100"/>
-        </div>
+        <input id="volume" type="range" min="0" max="100" value="100" step="5"/>
     </div>
+    <output id="volume-value" for="volume" aria-live="polite">100%</output>
+    <br/>
     <br/>
     <div id="tcounter">
         <span>t = <span id="t">0</span></span>
@@ -128,10 +188,11 @@
             ></strong
         >):
     </p>
-    <p id="displayText"></p>
+    <div id="displayTextParent">
+        <p id="displayText"></p>
+    </div>
     <br/>
     <h2 id="customization-settings-header">Customization settings</h2>
-    <p><strong>NO. MORE. BACKGROUND COLOR.</strong></p>
     <span>Theme: </span>
     <select id="theme" title="Theme">
         <option value="latte">🌻 Catppuccin Latte</option>
@@ -140,7 +201,33 @@
         <option value="mocha">🌿 Catppuccin Mocha</option>
         <option value="legacy">💻 Legacy</option>
     </select>
+    <br/>
+    <label for="sample-rates">Sample rates:</label>
+    <input type="text" id="sample-rates" placeholder="['8000', '13400', '44100']"/>
+    <span style="text-decoration: underline dashed;"
+          title="Customize the sample rates in the menu! JS array of strings, each being a sample rate in hertz (without a 'hz' prefix).">?</span>
+    <br/>
+    <label class="check-label">
+        <input type="checkbox" id="visuals" checked/>
+        <span>Enable Visuals</span>
+    </label>
+    <span style="text-decoration: underline dashed;"
+          title="Shows waveform at the bottom. Disable if you're experiencing lag.">?</span>
     <h2>Examples</h2>
+    <p>
+        <a
+                href="javascript:hashChange('#v6$QVRUQUNLPTgsQlBNPTEzNSxCUFM9NjAvQlBNLHQvPTQ4ZTMsdC09QlBTLzE2LG1pZGlfY29udj14PT40NDAqMioqKCh4LTY5KS8xMiksdD4wJiYoZmFjPTQsc2VjdD1NYXRoLnRydW5jKChoX3NlY3Q9TWF0aC50cnVuYygocV9zZWN0PU1hdGgudHJ1bmMoKGVfc2VjdD1NYXRoLnRydW5jKHQvQlBTL2ZhYykpLzIpKS8yKSkvMiksYT1bMCwxMiwxOSwyNCwyNiwyNywzMSwzNiwzOCwzOSw0MSw0Myw0NSw0Niw0OCw1MF0sa2M9c2VjdD49Mz8zOjAsYj1bMCwzLC0yLGtjPzE6NF0sYV9rPWJbTWF0aC50cnVuYyh0L0JQUypmYWMvYS5sZW5ndGgvMiklNF0ra2MsbF9hX2s9YltNYXRoLnRydW5jKHQvQlBTKmZhYy9hLmxlbmd0aC8yLTEpJTRdK2tjLGk9YVtNYXRoLnRydW5jKHQvQlBTKmZhYyVhLmxlbmd0aCldK2FfayxzZWN0PDgmJk1hdGguc2luKHQqOCptaWRpX2NvbnYoaSkqUEkqMikvKDErdC9CUFMqZmFjJTEpKihBVFRBQ0s+MD9NYXRoLm1pbih0L0JQUypmYWMqQVRUQUNLJUFUVEFDSywxKTouNSkvTWF0aC5taW4oQVRUQUNLLzIsMSkrMCsyKigoaz1taWRpX2NvbnYoYV9rK01hdGgubWF4KGxfYV9rK2Ffay1NYXRoLnRydW5jKHQvQlBTKmZhYyo4JTI1NiksMCkpKjE2KSp0LU1hdGguZmxvb3IoLjUrdCprKSkvKDMrdC9CUFMlOCkrKHNlY3Q+PTEmJnNlY3Q8NyYmTWF0aC5zaW4oNCpzcXJ0KHQvQlBTKmZhYyo1MTIqKHM9MioqKGVfc2VjdDwyMz9zZWN0KyhoX3NlY3Q9PTUpKyhxX3NlY3Q9PTExKS0xOnNlY3Q+PTM/Wy4uLkFycmF5KDE1KS5maWxsKDApLDJdW01hdGgudHJ1bmModC9CUFMpJTE2XTotNDA5NikpJTQwOTYpKS8oMSt0L0JQUyo4KnMlMTYpKSk=.48000~fb')"
+        >"hmmmmm"</a
+        >
+        (by butterroach)
+    </p>
+    <p>
+        <a
+                href="javascript:hashChange('#KHQmMTAyNHx8dCYxNjM4NCYmdCYyMDQ4JiYhKHQmNTEyKSk/KHQmNDA5NiYmISh0JjIwNDgpPyh0KnQqdD4+fnQqdCkrMTI3OnQqKCh0Pj4xMSYxKSsxKSooMSsodD4+MTYmMSkqMykpKjI6MA==@8000]bb')"
+        >"chip" (default code)</a
+        >
+        (by butterroach)
+    </p>
     <p>
         <a
                 href="javascript:hashChange('#dC89NC44LHQ+PjEyJiYoc2luKCh0LSh0Pj40JnQ+PjgpJnQ+PjEyKS0xKStzaW4oMjUqY2JydCh0JTQwOTYpKSsocmFuZG9tKCkqKH50Pj4nMzI0MTUzNDInW3Q+PjE3JjddJjI1NSk+PjYpKS80LjUtLjI1@48000]fb')"
@@ -298,13 +385,6 @@
         <span class="ste">ste</span><span class="reo">reo</span>, funcbeat,
         <a href="https://dollchan.net/btb/res/141.html#141">source</a>)
     </p>
-    <p>
-        <a
-                href="javascript:hashChange('#KHQmMTAyNHx8dCYxNjM4NCYmdCYyMDQ4JiYhKHQmNTEyKSk/KHQmNDA5NiYmISh0JjIwNDgpPyh0KnQqdD4+fnQqdCkrMTI3OnQqKCh0Pj4xMSYxKSsxKSooMSsodD4+MTYmMSkqMykpKjI6MA==@8000]bb')"
-        >"chip" (default code)</a
-        >
-        (by butterroach)
-    </p>
     <p data-dev-mode>
         <a
                 href="javascript:hashChange('#anN0ZURpc3BsYXlUZXh0PXQsdA==@32000]bb')"
@@ -324,34 +404,35 @@
     <hr/>
 </div>
 <footer style="text-align: left;">
-    <p>&copy;Butterroach 2023-2026. All rights reserved.</p>
-    <p>This website and all of its code are licensed under the MIT license.</p>
+    <p>&copy;Butterroach 2023-2026</p>
+    <p>This website and all of its code (excluding the bytebeat exmaples) are licensed under the MIT license.</p>
     <details>
         <summary>View the MIT license text</summary>
+        <div class="details-content">
+            <p>
+                Permission is hereby granted, free of charge, to any person obtaining a copy
+                of this software and associated documentation files (the "Software"), to deal
+                in the Software without restriction, including without limitation the rights
+                to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+                copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the
+                following conditions:
+            </p>
 
-        <p>
-            Permission is hereby granted, free of charge, to any person obtaining a copy
-            of this software and associated documentation files (the "Software"), to deal
-            in the Software without restriction, including without limitation the rights
-            to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-            copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the
-            following conditions:
-        </p>
+            <p>
+                The above copyright notice and this permission notice shall be included in all
+                copies or substantial portions of the Software.
+            </p>
 
-        <p>
-            The above copyright notice and this permission notice shall be included in all
-            copies or substantial portions of the Software.
-        </p>
-
-        <p>
-            THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-            IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-            FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-            AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-            LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-            OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-            SOFTWARE.
-        </p>
+            <p>
+                THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+                IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+                FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+                AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+                LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+                OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+                SOFTWARE.
+            </p>
+        </div>
     </details>
     <p>
         The JStebeat branding may <strong>NOT</strong> be used in any derivative work in a manner that suggests
@@ -365,9 +446,5 @@
 <canvas id="visual" height="256" width="1024"></canvas>
 <div id="visual-ghost"></div>
 <script type="module" src="src/main.ts"></script>
-<script>
-    // noinspection JSUnresolvedReference
-    feather.replace();
-</script>
 </body>
 </html>

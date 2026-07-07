@@ -2,7 +2,7 @@
 
 :root {
     --monospace: Consolas, Monaco, Liberation Mono,
-    DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace; /* i stole this btw hehe */
+    DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
 }
 
 body {
@@ -53,7 +53,7 @@ a {
     background-color: rgb(from var(--overlay2) r g b / 0.2);
 }
 
-label {
+label, legend {
     cursor: text;
 }
 
@@ -114,21 +114,31 @@ label {
 #displayText {
     display: inline;
     font-family: var(--monospace), monospace;
-    background-color: #00000050;
-    border-radius: 20px;
+}
+
+#displayTextParent {
+    display: inline-flex;
+    width: fit-content;
+    background-color: var(--surface0);
+    border-radius: 3px;
+    height: 2em;
+    align-items: center;
+    padding: 0 5px;
+    margin: 2px;
+    border: 1px solid var(--surface2);
 }
 
 .red {
     color: var(--red);
 }
 
-button, input, select {
-    transition: background-color 0.1s, border-color 0.1s, transform 0.1s;
+button, input, select, #sample-rate-select-open {
+    transition: background-color 0.1s, border-color 0.1s, transform 0.1s, opacity 0.1s;
     background-color: var(--surface0);
     color: var(--text);
     border: var(--surface2) 1px solid;
     border-radius: 3px;
-    padding: 3px 20px;
+    padding: 0 5px;
     margin: 2px;
 }
 
@@ -362,7 +372,7 @@ select {
 }
 
 summary::before {
-    content: "▶";
+    content: ">";
     font-family: var(--monospace), monospace;
     color: var(--overlay1);
     display: inline-block;
@@ -389,4 +399,100 @@ hr {
 
 html[data-dev-mode="false"] *[data-dev-mode] {
     display: none;
+}
+
+#sample-rate-select:not(#sample-rate-select:focus) {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+fieldset, legend {
+    display: contents;
+}
+
+input, select {
+    height: 2rem;
+}
+
+button {
+    height: 2.5rem;
+}
+
+#input-combo {
+    display: inline-flex;
+}
+
+#input-combo input,
+#input-combo button {
+    margin: 0;
+    height: 2rem;
+    box-sizing: border-box;
+    line-height: 1;
+}
+
+#input-combo input {
+    border-right: 0;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+#input-combo button {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    padding: 0;
+}
+
+#input-combo button svg {
+    height: 50%;
+}
+
+#sample-rates {
+    font-family: var(--monospace), monospace;
+    field-sizing: content;
+    min-width: 200px;
+    max-width: 75vw;
+    box-sizing: border-box;
+}
+
+#i-hate-chrome {
+    color: var(--red);
+}
+
+.check-label {
+    display: inline-flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+}
+
+.check-label input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    margin: 0;
+    background-color: var(--surface0);
+    width: 2em;
+    height: 2em;
+    cursor: pointer;
+    display: grid;
+    place-content: center;
+}
+
+.check-label input[type="checkbox"]::before {
+    content: "";
+    width: 1.5em;
+    height: 1.5em;
+    opacity: 0;
+    box-shadow: inset 1em 1em var(--base);
+    clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+}
+
+.check-label input[type="checkbox"]:checked {
+    background-color: var(--green);
+}
+
+.check-label input[type="checkbox"]:checked::before {
+    opacity: 1;
 }

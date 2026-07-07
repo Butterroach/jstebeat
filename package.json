@@ -1,25 +1,28 @@
 {
-  "name": "jstebeat",
-  "private": true,
-  "version": "6.1.2",
-  "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview"
-  },
-  "devDependencies": {
-    "@types/node": "^24.6.2",
-    "typescript": "~5.8.3",
-    "vite": "7.1.11"
-  },
-  "dependencies": {
-    "@catppuccin/codemirror": "^1.0.1",
-    "@catppuccin/palette": "^1.7.1",
-    "@codemirror/lang-javascript": "^6.2.4",
-    "@codemirror/state": "^6.5.2",
-    "@codemirror/view": "^6.38.4",
-    "@types/audioworklet": "^0.0.87",
-    "codemirror": "^6.0.2"
-  }
+    "name": "jstebeat",
+    "private": true,
+    "version": "7.0.0",
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "tsc && vite build",
+        "preview": "vite preview"
+    },
+    "devDependencies": {
+        "@types/feather-icons": "^4.29.4",
+        "@types/node": "^24.6.2",
+        "@types/sortablejs": "^1.15.9",
+        "typescript": "~5.8.3",
+        "vite": "^7.3.5"
+    },
+    "dependencies": {
+        "@catppuccin/codemirror": "^1.0.1",
+        "@catppuccin/palette": "^1.7.1",
+        "@codemirror/lang-javascript": "^6.2.4",
+        "@codemirror/state": "^6.5.2",
+        "@codemirror/view": "^6.38.4",
+        "@types/audioworklet": "^0.0.87",
+        "codemirror": "^6.0.2",
+        "feather-icons": "^4.29.2"
+    }
 }
